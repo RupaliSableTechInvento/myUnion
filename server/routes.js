@@ -74,7 +74,7 @@ const routes = (route) => {
   route.route('/getAllUserCount')
   .post(usersController.getAllCount)
 
-  route.route('/forgetPassword')
+  route.route('/forgotPassword')
   .post(usersController.forgotPassword);
  
   route.route('/getUserInfo')

@@ -53,7 +53,7 @@ const routes = route => {
   route.route('/getAllDept').post(departmentController.getAllDept);
   route.route('/getAllUserCount').post(usersController.getAllCount);
 
-  route.route('/forgetPassword').post(usersController.forgotPassword);
+  route.route('/forgotPassword').post(usersController.forgotPassword);
 
   route.route('/getUserInfo').post(usersController.getUserInfo);
   route.route('/addUserProfilePic').post(usersController.addUserProfilePic);
