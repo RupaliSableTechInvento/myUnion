@@ -83,7 +83,7 @@ const routes = (route) => {
   .post(usersController.addUserProfilePic)
   route.route('/getAllMessagesWithFriend')
     .get(usersController.getAllMessagesWithFriend)
-    route.route('/addImage')
+    route.route('/uploadProfilePhoto')
     .post(usersController.addImage)
   route.route('/isTokenValid')
     .post(authController.isTokenValid);

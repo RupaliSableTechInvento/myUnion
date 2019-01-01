@@ -491,10 +491,12 @@ const usersController = {
   addImage: (req, res, next) => {
     // var id = mongoose.Types.ObjectId(req.body.id);
       var base64Str = req.body.imageUrl;
+      console.log("req body==>",req.body);
+      
       var imageUrls = [];
-      var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '_');
+      var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
       console.log("Folder path==>",folderPath);
-      var optionalObj = { 'fileName': 'rupali', 'type': 'png' };
+      var optionalObj = { 'fileName': '2133131', 'type': 'png' };
       var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
       imageUrls.push({ url: '/Images/_' + imageInfo.fileName, })
       var query={
@@ -803,7 +805,29 @@ const usersController = {
         });
       
       } else if(user.length){
-        userElection.save(req.body, function(err, user) {
+
+        var imageUrl=req.body.imageUrl
+        console.log("req body==>",req.body);
+
+        var query={
+        }
+        if (imageUrl) {
+          var base64Str = req.body.imageUrl;
+          var imageUrls = [];
+          var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '_');
+          console.log("Folder path==>",folderPath);
+          var optionalObj = { 'fileName': 'rupali', 'type': 'png' };
+          var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
+          imageUrls.push({ url: '/Images/_' + imageInfo.fileName, })
+          req.body.imageUrl=imageUrls;
+          query=req.body;
+
+        } else {
+          query=req.body
+        }
+
+     
+        userElection.save(query, function(err, user) {
           if (err) {
             res.json({
               isError:true,

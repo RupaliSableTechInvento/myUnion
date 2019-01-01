@@ -41,8 +41,8 @@ const usersElectionSchema = new mongoose.Schema({
     default: false
 
   },
-  imgURL: {
-    type: Object
+  imageUrl: {
+    type: Array
     // default: "../../assets/app/media/img/users/userProfileNew.png"
   },
   formSubmitted: {

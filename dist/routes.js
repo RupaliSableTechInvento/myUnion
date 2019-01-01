@@ -58,7 +58,7 @@ const routes = route => {
   route.route('/getUserInfo').post(usersController.getUserInfo);
   route.route('/addUserProfilePic').post(usersController.addUserProfilePic);
   route.route('/getAllMessagesWithFriend').get(usersController.getAllMessagesWithFriend);
-  route.route('/addImage').post(usersController.addImage);
+  route.route('/uploadProfilePhoto').post(usersController.addImage);
   route.route('/isTokenValid').post(authController.isTokenValid);
 
   route.route('/users/changePassword').post(usersController.changePassword);

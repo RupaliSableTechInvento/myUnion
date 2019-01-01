@@ -14,24 +14,24 @@
                     .width(150)
                     .height(200);
 
-                    // $.ajax({
-                    //         url: "http://localhost:3000/addImage",
-                    //         type: 'post',
-                    //         data: {
-                    //         'imageUrl': e.target.result,
-                    //         '_id':'5c21e809e838e5289081c5ad'
-                    //         },
-                    //         success: function(resData) {
-                    //             console.log("Success==>",resData);
+                    $.ajax({
+                            url: "http://localhost:3000/uploadProfilePhoto",
+                            type: 'post',
+                            data: {
+                            'imageUrl': e.target.result,
+                            '_id':'5c21e809e838e5289081c5ad'
+                            },
+                            success: function(resData) {
+                                console.log("Success==>",resData);
                                 
-                    //         },
-                    //         error:function (err) {
-                    //             console.log("ERoor==>",err);
+                            },
+                            error:function (err) {
+                                console.log("ERoor==>",err);
                     
                                 
-                    //         }
+                            }
                             
-                    //  });
+                     });
 
                      $.ajax({
                             url: " https://www.googleapis.com/youtube/v3/videos?id=bcMVpCRxwcqaT1wiWM_ocg&key=AIzaSyBbDncaQmROcXHPQs5U_sMGaH4bsuX96pA",
