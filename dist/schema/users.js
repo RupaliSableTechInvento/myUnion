@@ -75,6 +75,8 @@ const usersSchema = new mongoose.Schema({
 });
 
 usersSchema.plugin(uniqueValidator);
+usersSchema.index({ company_name: 1, empID: 1 }, { unique: true });
+
 // usersSchema.plugin(autoIncrement.plugin, 'id');
 
 module.exports = usersSchema;

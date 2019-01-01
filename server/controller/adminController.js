@@ -191,7 +191,6 @@ const adminController = {
             console.log("valid Data==>",deptDataForVoting);
             req.body.deptDataForVoting=deptDataForVoting;
              let user = new usersModel(req.body);
-
                user.save(req.body, function(err, user) {
                 if (err) {
                   console.log("Error in user save",err,user);
@@ -338,7 +337,10 @@ const adminController = {
 
       }
       else{
-
+        res.json({
+          isError:true,
+          error:'Unauthorized access'
+        })
       }
       
     },
@@ -375,8 +377,6 @@ const adminController = {
               $push: { candidateData: dataObj } 
             },
             options = {new: true};
-            
-          
             electionDetailsModel.findOneAndUpdate(query,update,options,function (error,electionDetails) {
               if (error) {
                 res.json({
@@ -490,6 +490,90 @@ const adminController = {
         })
       }
     },
+    deActivateUser:(req,res,next)=>{
+      var phone_no=req.body.phone_no;
+      var token1=  req.body.authorization;
+      var decoded = jwt.verify(token1, env.App_key);
+      console.log("decoded reqest from==>", decoded.role)
+  
+      if (decoded.role=='admin') { 
+        usersModel.findOneAndUpdate({phone_no:phone_no},{$set:{isActive:false}},function (err,result) {
+          if (err) {
+            res.json({
+              isError:true,
+              error:err
+            })
+            
+          } else {
+            tokenModel.findOneAndUpdate({phone_no:phone_no},{ sort: { 'expiry' : -1 } },{$set:{isActive:false}},{new:true},function (error,data) {
+             
+             if (error) {
+              res.json({
+                isError:true,
+                err:error
+              })
+             } else {
+              res.json({
+                success:true,
+                data:data
+              })
+             }
+             
+            
+            })
+          }
+         
+        })
+      }
+      else{
+        res.json({
+          isError:true,
+          error:'Unauthorized access'
+        })
+
+      }
+     
+
+    },
+    setActiveUser:(req,res,next)=>{
+      var phone_no=req.body.phone_no;
+      var token1=  req.body.authorization;
+      var decoded = jwt.verify(token1, env.App_key);
+      console.log("decoded reqest from==>", decoded.role)
+  
+      if (decoded.role=='admin') { 
+        usersModel.findOneAndUpdate({phone_no:phone_no},{$set:{isActive:true}},function (err,result) {
+          if (err) {
+            res.json({
+              isError:true,
+              error:err
+            })
+            
+          } else {
+          
+              res.json({
+                success:true,
+                data:result
+              })
+          
+          }
+         
+        })
+      }
+      else{
+        res.json({
+          isError:true,
+          error:'Unauthorized access'
+        })
+
+      }
+     
+
+    },
+    deactiveCandidate:(req,res,next)=>{
+      
+    }
+  
   
    
 };

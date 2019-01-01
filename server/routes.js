@@ -15,9 +15,9 @@ const routes = (route) => {
   //   res.sendFile(path.resolve(__dirname + '/../dist/' + 'index.html'));
   // });
 
-  route.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname + '/../frontend/' + 'index.html'));
-  });
+  // route.get('*', (req, res) => {
+  //   res.sendFile(path.resolve(__dirname + '/../frontend/' + 'index.html'));
+  // });
   route.get('#/', (req, res) => {
     res.sendFile(path.resolve(__dirname + '/../frontend/' + 'index.html'));
   });
@@ -32,7 +32,11 @@ const routes = (route) => {
   .post(adminController.login);
   route.route('/adminRegister')
   .post(adminController.register);
-
+  route.route('/setActiveUser')
+  .post(adminController.setActiveUser);
+  route.route('/deActivateUser')
+  .post(adminController.deActivateUser);
+  
   route.route('/registerUser')
   .post(adminController.registerUser);
   route.route('/createElection')
@@ -52,6 +56,9 @@ const routes = (route) => {
   .post(authController.register);
   route.route('/getAllCompanyCount')
   .post(companyController.getAllCount)
+  route.route('/getAllCompany')
+  .get(companyController.getAllCompany)
+  
 
   route.route('/getInactiveReffCode')
   .post(companyController.getInactiveReffCode)

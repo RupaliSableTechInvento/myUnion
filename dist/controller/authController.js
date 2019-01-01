@@ -35,7 +35,8 @@ const authController = {
     // global.email = credential.email;
     usersModel.findOne({
       phone_no: credential.phone_no,
-      password: credential.password
+      password: credential.password,
+      isActive: true
     }, (err, user) => {
       if (err) res.json(err);
       if (user !== null) {
@@ -97,7 +98,7 @@ const authController = {
       } else {
         res.json({
           isError: true,
-          data: "phone No or password incorrect !"
+          data: "Invalid User !"
         });
       }
     });
@@ -282,7 +283,7 @@ const authController = {
     });
   },
   isTokenValid: (req, res, next) => {
-    console.log("is Token valid==>", req.headers);
+    console.log("is Token valid==>", req.body);
 
     tokenModel.find({
       $and: [{

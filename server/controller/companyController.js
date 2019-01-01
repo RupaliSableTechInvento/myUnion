@@ -99,6 +99,26 @@ const companyController = {
               
           })
       },
+      getAllCompany:(req,res,next)=>{
+        companyModel.find({},{company_name:1,_id:0},function (err,company) {
+            if (err) {
+                res.json({
+                    isError:true,
+                    data:err
+                })
+                
+            }
+            else{
+                console.log("company Names ==>",company);
+                
+              res.json({
+                  success:true,
+                  data:company
+              })
+            }
+            
+        })
+    },
       generateReffCode:(req,res,next)=>{
       var token1=  req.body.authorization;
         var decoded = jwt.verify(token1, env.App_key);
