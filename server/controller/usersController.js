@@ -337,30 +337,7 @@ const usersController = {
       });
     });
   },
-  addUserProfilePic: (req, res, next) => {
-    var decoded = jwt.verify(req.body.authorization, env.App_key);
 
-    var imgURL = req.body.imgURL;
-
-    usersModel.findOneAndUpdate({
-      'email': decoded.email
-    }, {
-      $set: {
-        imgURL: imgURL
-      }
-    }, (err, data) => {
-      if (err) return res.json({
-        isError: true,
-        data: err
-      });
-      else {
-        res.json({
-          success: true,
-          data: data
-        })
-      }
-    });
-  },
   getAllCount:(req,res,next)=>{
     console.log("getAllUserCount==>");
     
@@ -407,7 +384,7 @@ const usersController = {
     });
 
   },
-  addUserInfo: async(req, res, next) => {
+  EditUserProfile: async(req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     console.log("Add User info for user==>",decoded.phone_no);
     

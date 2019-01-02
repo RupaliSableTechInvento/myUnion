@@ -66,8 +66,7 @@ const routes = (route) => {
  
   route.route('/getUserInfo')
   .post(usersController.getUserInfo)
-  route.route('/addUserProfilePic')
-  .post(usersController.addUserProfilePic)
+
   route.route('/getAllMessagesWithFriend')
   .get(usersController.getAllMessagesWithFriend)
   route.route('/uploadProfilePhoto')
@@ -81,8 +80,8 @@ const routes = (route) => {
   .post(usersController.addSupport)
   route.route('/unSupport')
   .post(usersController.unSupport)
-  route.route('/EditUserProfile ')
-  .post(usersController.EditUserInfo)
+  route.route('/EditUserProfile')
+  .post(usersController.EditUserProfile)
 
 
   // Company API
