@@ -136,12 +136,19 @@ const companyController = {
                     data: err
                 });
             } else {
-                console.log("company found==>", company);
                 var department = company[0].department;
-                res.json({
-                    success: true,
-                    data: department
+                var deptArray = [];
+                console.log("department found==>", department);
+                Object.keys(department).forEach(function (key) {
+
+                    deptArray.push(key);
                 });
+                if (deptArray.length) {
+                    res.json({
+                        success: true,
+                        data: deptArray
+                    });
+                }
             }
         });
     }

@@ -89,6 +89,8 @@ const companyController = {
         });
     },
     getAllCompany: (req, res, next) => {
+        console.log("Get all company..");
+
         companyModel.find({}, { company_name: 1, _id: 0 }, function (err, company) {
             if (err) {
                 res.json({
@@ -96,12 +98,17 @@ const companyController = {
                     data: err
                 });
             } else {
-                console.log("company Names ==>", company);
-
-                res.json({
-                    success: true,
-                    data: company
+                var companyArray = [];
+                company.forEach((element, index, array) => {
+                    console.log("Element==>", element.company_name);
+                    companyArray.push(element.company_name);
                 });
+                if (companyArray.length == company.length) {
+                    res.json({
+                        success: true,
+                        data: companyArray
+                    });
+                }
             }
         });
     },

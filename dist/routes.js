@@ -34,6 +34,7 @@ const routes = route => {
 
   route.route('/registerUser').post(adminController.registerUser);
   route.route('/createElection').post(adminController.createElection);
+  route.route('/addNotice').post(adminController.addNotice);
 
   route.route('/addCompany').post(companyController.addCompany);
 

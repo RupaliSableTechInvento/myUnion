@@ -478,7 +478,29 @@ const adminController = {
       });
     }
   },
-  deactiveCandidate: (req, res, next) => {}
+  deactiveCandidate: (req, res, next) => {},
+  addNotice: (req, res, next) => {
+    var token1 = req.body.authorization;
+    var decoded = jwt.verify(token1, env.App_key);
+    console.log("decoded reqest from==>", decoded.role);
+
+    if (decoded.role == 'admin') {
+      var html = `This is a notice...  Important to share with you..`;
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(html);
+
+      // res.json({
+      //   success:true,
+      //   data:html
+      // })
+
+    } else {
+      res.json({
+        isError: true,
+        error: 'Unauthorized access'
+      });
+    }
+  }
 
 };
 

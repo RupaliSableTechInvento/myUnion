@@ -219,7 +219,6 @@ function demo(ajax_data, mainCallback) {
 
 const usersController = {
  
-
   getAllMessagesWithFriend: (req, res, next) => {
 
     var decoded = jwt.verify(req.body.authorization, env.App_key);
@@ -361,7 +360,6 @@ const usersController = {
       }
     });
   },
-
   getAllCount:(req,res,next)=>{
     console.log("getAllUserCount==>");
     
@@ -395,7 +393,6 @@ const usersController = {
         
     })
   },
-
   getAll: async(req, res, next) => {
     usersModel.find({}, (err, users) => {
       if (err) return res.json({
@@ -474,7 +471,6 @@ const usersController = {
       }
     });
   },
-
   create: (req, res, next) => {
     usersModel.create(req.body, function(err, user) {
       if (err) return res.json({
@@ -487,7 +483,6 @@ const usersController = {
       })
     })
   },
-
   addImage: (req, res, next) => {
     // var id = mongoose.Types.ObjectId(req.body.id);
       var base64Str = req.body.imageUrl;
@@ -520,7 +515,6 @@ const usersController = {
       })
     });
   },
-
   delete: (req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     usersModel.findOneAndUpdate({
@@ -540,7 +534,6 @@ const usersController = {
       }
     });
   },
- 
   forgotPassword: (req, res, next) => {
     var phone_no = req.body.phone_no;
     console.log("forgot password password request==>",phone_no);
@@ -781,7 +774,6 @@ const usersController = {
   },
   addCandidate:(req,res,next)=>{
     console.log("addCandidate==>",req.body);
-    let userElection = new userElectionModel(req.body);
     var decoded = jwt.verify(req.body.authorization, env.App_key);
 
     var phone_no=decoded.phone_no;
@@ -825,8 +817,9 @@ const usersController = {
         } else {
           query=req.body
         }
-
-     
+        req.body.phone_no=phone_no
+        req.body.empID=user[0].empID
+        let userElection = new userElectionModel(req.body);
         userElection.save(query, function(err, user) {
           if (err) {
             res.json({

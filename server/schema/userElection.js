@@ -28,7 +28,7 @@ const usersElectionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  Post:{
+  status:{
     type:String,
     default:'No Post'
   },

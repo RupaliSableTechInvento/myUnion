@@ -41,6 +41,9 @@ const routes = (route) => {
   .post(adminController.registerUser);
   route.route('/createElection')
   .post(adminController.createElection);
+  route.route('/addNotice')
+  .post(adminController.addNotice);
+  
     
   route.route('/addCompany')
   .post(companyController.addCompany);

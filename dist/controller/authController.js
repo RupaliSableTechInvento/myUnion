@@ -28,25 +28,24 @@ const app = express();
 
 const authController = {
   login: (req, res, next) => {
-    console.log("user login==>", req.body);
 
     req.body.password = encode().value(req.body.password);
     const credential = req.body;
+    console.log("user login==>", credential);
+
     // global.email = credential.email;
-    usersModel.findOne({
-      phone_no: credential.phone_no,
-      password: credential.password,
-      isActive: true
+    usersModel.find({
+      $and: [{ phone_no: credential.phone_no }, { password: credential.password }, { isActive: 'active' }]
     }, (err, user) => {
       if (err) res.json(err);
-      if (user !== null) {
-        console.log("User=>", user);
+      if (user.length) {
+        console.log("User[0]=>", user);
         var d = new Date();
         var v = new Date();
         v.setMinutes(d.getMinutes() + 10);
         const token1 = jwt.sign({
-          phone_no: user.phone_no,
-          id: user._id,
+          phone_no: user[0].phone_no,
+          id: user[0]._id,
           role: 'user',
           expiry: v
         }, env.App_key);
@@ -56,14 +55,14 @@ const authController = {
         var currentTime = new Date();
         var token2 = {
           token: token1,
-          phone_no: user.phone_no,
+          phone_no: user[0].phone_no,
           isActive: "active",
           expiry: v,
           userActiveTime: currentTime
         };
         tokenModel.findOneAndUpdate({
           $and: [{
-            phone_no: user.phone_no
+            phone_no: user[0].phone_no
           }, {
             isActive: "active"
           }]
@@ -87,15 +86,17 @@ const authController = {
                 sucess: true,
                 data: token1,
                 user: {
-                  phone_no: user.phone_no,
-                  full_name: user.full_name,
-                  id: user._id
+                  phone_no: user[0].phone_no,
+                  full_name: user[0].full_name,
+                  id: user[0]._id
                 }
               });
             });
           }
         });
       } else {
+        console.log("USer==>", user);
+
         res.json({
           isError: true,
           data: "Invalid User !"
