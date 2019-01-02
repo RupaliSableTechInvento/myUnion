@@ -36,6 +36,8 @@ const routes = route => {
   route.route('/createElection').post(adminController.createElection);
   route.route('/addNotice').post(adminController.addNotice);
 
+  // User API
+
   route.route('/addCompany').post(companyController.addCompany);
 
   route.route('/addDept').post(departmentController.addDept);
@@ -71,6 +73,7 @@ const routes = route => {
   route.route('/approveCandidateReq').post(adminController.approveCandidateReq);
   route.route('/addSupport').post(usersController.addSupport);
   route.route('/unSupport').post(usersController.unSupport);
+  route.route('/addUserInfo').post(usersController.addUserInfo);
 
   route.route('/createAccount').post(fightingFundController.createAccount);
 

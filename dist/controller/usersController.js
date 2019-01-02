@@ -351,9 +351,15 @@ const usersController = {
   },
   addUserInfo: async (req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
+    console.log("Add User info for user==>", decoded.phone_no);
+
+    if (req.body.dateOfBirth) {
+      var dateOfBirth = new Date(req.body.dateOfBirth);
+      req.body.dateOfBirth = dateOfBirth;
+    }
     usersModel.findOneAndUpdate({
 
-      'email': decoded.email
+      phone_no: decoded.phone_no
     }, req.body, {
       new: true
     }, (err, user) => {
@@ -363,7 +369,7 @@ const usersController = {
       });
       res.json({
         success: true,
-        data: user
+        data: req.body
       });
     });
   },
@@ -441,8 +447,9 @@ const usersController = {
       }
 
     };
+    var decoded = jwt.verify(req.body.authorization, env.App_key);
     usersModel.findOneAndUpdate({
-      'phone_no': '7276374306'
+      'phone_no': decoded.phone_no
     }, query, {
       new: true
     }, (err, user) => {

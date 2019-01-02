@@ -14,6 +14,12 @@ const usersSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
+  dateOfBirth:{
+    type:Date,
+},
+email:{
+  type: String,
+},
   empID: {
     type: String,
     required: true

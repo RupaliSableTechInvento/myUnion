@@ -1,6 +1,7 @@
 var usersModel =require( '../models/usersModel')
 // var tokenModel =require( './../models/tokenModel');
 var companyModel =require( '../models/companyModel')
+var Common = require('../common')
 
 var messagesModel =require( '../models/messagesModel');
 var userElectionModel =require('../models/userElectionModel')
@@ -408,9 +409,15 @@ const usersController = {
   },
   addUserInfo: async(req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
+    console.log("Add User info for user==>",decoded.phone_no);
+    
+      if (req.body.dateOfBirth) {
+        var dateOfBirth= new Date(req.body.dateOfBirth)
+        req.body.dateOfBirth=dateOfBirth;
+      }
     usersModel.findOneAndUpdate({
 
-      'email': decoded.email
+      phone_no:decoded.phone_no
     }, req.body, {
       new: true
     }, (err, user) => {
@@ -418,9 +425,9 @@ const usersController = {
         isError: true,
         data: err
       });
-      res.json({
+      res.json({  
         success: true,
-        data: user
+        data:req.body
       })
     });
 
@@ -483,37 +490,47 @@ const usersController = {
       })
     })
   },
-  addImage: (req, res, next) => {
+  uploadProfilePhoto: (req, res, next) => {
     // var id = mongoose.Types.ObjectId(req.body.id);
+
       var base64Str = req.body.imageUrl;
-      console.log("req body==>",req.body);
-      
-      var imageUrls = [];
-      var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
-      console.log("Folder path==>",folderPath);
-      var optionalObj = { 'fileName': '2133131', 'type': 'png' };
-      var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
-      imageUrls.push({ url: '/Images/_' + imageInfo.fileName, })
-      var query={
-        $set:{
-          imgURL : imageUrls,
+      var decoded = jwt.verify(req.body.authorization, env.App_key);
+      if (base64Str) {
+        var imageUrls = [];
+        var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
+        console.log("Folder path==>",folderPath);
+        var baseId = Common.getAlphaNumericRandomString(6, '#a')
+        var optionalObj = { 'fileName': baseId, 'type': 'png' };
+        var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
+        imageUrls.push({ url: '/Images/_' + imageInfo.fileName, })
+        var query={
+          $set:{
+            imgURL : imageUrls,
+          }
+          
         }
-        
-      }
-    usersModel.findOneAndUpdate({
-      'phone_no': '7276374306'
-    }, query, {
-      new: true
-    }, (err, user) => {
-      if (err) return res.json({
-        isError: true,
-        data: err
+      
+      usersModel.findOneAndUpdate({
+        'phone_no': decoded.phone_no
+      }, query, {
+        new: true
+      }, (err, user) => {
+        if (err) return res.json({
+          isError: true,
+          data: err
+        });
+        res.json({
+          success: true,
+          data: user
+        })
       });
-      res.json({
-        success: true,
-        data: user
-      })
-    });
+      } else {
+        res.json({
+          isError: true,
+        
+        })
+      }
+   
   },
   delete: (req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
