@@ -55,7 +55,7 @@ const routes = (route) => {
   
   route.route('/login')
   .post(authController.login);
-  route.route('/register')
+  route.route('/signUp')
   .post(authController.register);
   route.route('/getAllCompanyCount')
   .post(companyController.getAllCount)

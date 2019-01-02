@@ -42,7 +42,7 @@ const routes = route => {
   route.route('/updateVoteCount').post(departmentController.updateVoteCount);
 
   route.route('/login').post(authController.login);
-  route.route('/register').post(authController.register);
+  route.route('/signUp').post(authController.register);
   route.route('/getAllCompanyCount').post(companyController.getAllCount);
   route.route('/getAllCompany').get(companyController.getAllCompany);
 
