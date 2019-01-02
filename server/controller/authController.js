@@ -261,6 +261,12 @@ const authController = {
             }
               
           }
+          else{
+            res.json({
+              isError: true,
+              data: 'match not found'
+            });
+          }
           
         }
         else{

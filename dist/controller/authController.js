@@ -234,6 +234,11 @@ const authController = {
                 data: 'Departement not found'
               });
             }
+          } else {
+            res.json({
+              isError: true,
+              data: 'match not found'
+            });
           }
         } else {
           res.json({
