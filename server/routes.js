@@ -68,6 +68,9 @@ const routes = (route) => {
     .post(usersController.getAllCount)
   route.route('/forgotPassword')
     .post(usersController.forgotPassword)
+    route.route('/getOne')
+    .post(usersController.getOne)
+    
   route.route('/getUserInfo')
     .post(usersController.getUserInfo)
   route.route('/getAllMessagesWithFriend')

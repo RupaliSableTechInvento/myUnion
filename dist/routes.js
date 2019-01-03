@@ -48,6 +48,8 @@ const routes = route => {
   // User API
   route.route('/getAllUserCount').post(usersController.getAllCount);
   route.route('/forgotPassword').post(usersController.forgotPassword);
+  route.route('/getOne').post(usersController.getOne);
+
   route.route('/getUserInfo').post(usersController.getUserInfo);
   route.route('/getAllMessagesWithFriend').get(usersController.getAllMessagesWithFriend);
   route.route('/uploadProfilePhoto').post(usersController.uploadProfilePhoto);

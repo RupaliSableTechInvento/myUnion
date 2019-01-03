@@ -16,7 +16,6 @@ const electionController = {
     var query = {
       $and: [{ company_name: company_name }, { isActive: true }]
     };
-
     electionDetailsModel.find(query).exec(function (err, result) {
       if (err) {
         res.json({

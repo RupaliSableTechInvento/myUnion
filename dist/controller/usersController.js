@@ -688,12 +688,11 @@ const usersController = {
     });
   },
   addCandidate: (req, res, next) => {
-    console.log("addCandidate==>", req.body);
+    // console.log("addCandidate==>",req.body);
     var decoded = jwt.verify(req.body.authorization, env.App_key);
 
     var phone_no = decoded.phone_no;
-
-    usersModel.find({
+    var userQuery = {
       $and: [{
         phone_no: phone_no
       }, {
@@ -701,7 +700,9 @@ const usersController = {
       }, {
         department_name: req.body.department_name
       }]
-    }, function (err, user) {
+    };
+
+    usersModel.find(userQuery, function (err, user) {
       if (err) {
         res.json({
           isError: true,
@@ -710,7 +711,7 @@ const usersController = {
       } else if (user.length) {
 
         var imageUrl = req.body.imageUrl;
-        console.log("req body==>", req.body);
+        console.log("req body==>", user);
 
         var query = {};
         if (imageUrl) {
@@ -718,7 +719,8 @@ const usersController = {
           var imageUrls = [];
           var folderPath = path.join(__dirname + '../../../', 'frontend', 'Images', '_');
           console.log("Folder path==>", folderPath);
-          var optionalObj = { 'fileName': 'rupali', 'type': 'png' };
+          var baseId = Common.getAlphaNumericRandomString(6, '#a');
+          var optionalObj = { 'fileName': baseId, 'type': 'png' };
           var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
           imageUrls.push({ url: '/Images/_' + imageInfo.fileName });
           req.body.imageUrl = imageUrls;

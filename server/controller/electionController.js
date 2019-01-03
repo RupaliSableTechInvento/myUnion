@@ -20,7 +20,6 @@ const electionController = {
         {isActive:true}
       ]
      }
-
     electionDetailsModel.find(
    query
       ).exec(function(err, result) { 
