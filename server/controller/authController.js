@@ -34,15 +34,15 @@ const authController = {
     req.body.password = encode().value(req.body.password);
     const credential = req.body;
     console.log("user login==>",credential);
-
-    // global.email = credential.email;
-    usersModel.find({
+    var query={
       $and:[
         { phone_no: credential.phone_no},
         { password: credential.password},
         {isActive:'active'}
       ]
-    }, (err, user) => {
+    }
+    // global.email = credential.email;
+    usersModel.find(query, (err, user) => {
       if (err) res.json(err);
       if (user.length) {
         console.log("User[0]=>", user)
@@ -322,15 +322,16 @@ const authController = {
   },
   isTokenValid:(req, res, next)=>{
     console.log("is Token valid==>",req.body);
-    
-      tokenModel.find({
+    var query={
       $and: [{
         token: req.body.authorization
       },
-      {
+      {       
         isActive: "active",
       }]
-    },(err, data) => { 
+    }
+    
+      tokenModel.find(query,(err, data) => { 
       if (err) {
         res.json({
           isError: true,

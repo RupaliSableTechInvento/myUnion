@@ -8,8 +8,15 @@ const electionDetailsSchema = new mongoose.Schema({
     unique: true,
     required: true
   },
-
+  isActive: {
+    type: Boolean,
+    default: true
+  },
   election_date: {
+    type: Date,
+    required: true
+  },
+  election_created: {
     type: Date,
     required: true
   },

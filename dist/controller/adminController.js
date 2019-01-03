@@ -239,8 +239,9 @@ const adminController = {
 
     if (decoded.role == 'admin') {
       var election_name = req.body.election_name;
-      var date = req.body.election_date;
+      req.body.election_date = new Date(req.body.election_date);
 
+      req.body.election_created = new Date();
       let electionDetails = new electionDetailsModel(req.body);
       electionDetails.save(req.body, function (err, electionDetails) {
         if (err) {
