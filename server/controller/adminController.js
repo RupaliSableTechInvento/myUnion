@@ -4,6 +4,7 @@ var tokenModel =require( './../models/tokenModel');
 var companyModel =require( '../models/companyModel');
 var electionDetailsModel=require('../models/electionDetailsModel');
 var userElectionModel=require('../models/userElectionModel');
+var noticeModel=require('../models/noticeModel')
 var fightingFundModel=require('./../models/fightingFundModel')
 
 var jwt =require( 'jsonwebtoken');
@@ -32,8 +33,11 @@ const adminController = {
         const credential = req.body;
         console.log("admin Login Credential==>",credential);
         
-        adminModel.findOne({ $and: [ {phone_no: credential.phone_no }, { password: credential.password} ] }
-          , (err, admin) => {
+        var query={
+          $and: [ {phone_no: credential.phone_no }, { password: credential.password} ] 
+        }
+        adminModel.findOne(
+          query, (err, admin) => {
           if (err) res.json(err);
           if (admin) {
             console.log("admin=>", admin)
@@ -56,17 +60,22 @@ const adminController = {
               expiry: v,
               adminActiveTime: currentTime
             };
-            tokenModel.findOneAndUpdate({
+            var findQuery={
               $and: [{
                 phone_no: admin.phone_no
               }, {
                 isActive: "active"
               }]
-            }, {
+            }
+            var updateQuery= {
               $set: {
                 isActive: "inactive"
               }
-            }, (err, data) => {
+            }
+            var options={
+              new :true
+            }
+            tokenModel.findOneAndUpdate(findQuery,updateQuery,options, (err, data) => {
               if (err) return res.json({
                 isError: true,
                 data: err
@@ -99,7 +108,7 @@ const adminController = {
     register: (req, res, next) => {
         console.log("admin  register", req.body)
         var account_created = new Date();
-        if (req.body.password != "" && req.body.password.length > 6) {
+    
           req.body.password = encode().value(req.body.password);
           let admin = new adminModel(req.body);
           req.body.account_created = account_created;
@@ -115,12 +124,7 @@ const adminController = {
                 data: user,
                 })
           })
-        } else {
-          res.json({
-            isError: true,
-            data: 'invalid Password',
-            })
-        }
+       
       },
     registerUser: (req, res, next) => {
 
@@ -131,67 +135,47 @@ const adminController = {
    
        if (decoded.role=='admin') {  
         var account_created = new Date();
-        var passwordGenerated = generator.generate({
-          length: 6,
-          numbers: true
-        });
-    
-        var phone_no=req.body.phone_no;
-        var userMsg='Congrats you are succesfully registerd for My union. Your password :'+passwordGenerated;
-      req.body.password = encode().value(passwordGenerated);
-      req.body.account_created = account_created;
-
-      var isCompanyValid=false;
-      var isDeptartmentValid=false;
-      var isRefference_codeValid=false;
-      var isCompanyValid=(req.body.company_name.length>0)?true:false;
-      var isDeptartmentValid=(req.body.department_name.length>0)?true:false;
-      var isRefference_codeValid=(req.body.refference_code.length>0)?true:false;
-
-
-      console.log("Account Created==>", account_created,isCompanyValid,isDeptartmentValid,isRefference_codeValid);
-
-      if ((isCompanyValid)&&(isDeptartmentValid)&&(isRefference_codeValid)) {
         var company_name=req.body.company_name;
         var department_name=req.body.department_name;
         var refference_code=req.body.refference_code;
-          companyModel.findOne({'company_name':company_name},function (err,company) {
-        if (company) {
+        var findQuery={
 
-          var isRefferenceCodeFound=false;
-          var isDeptartmentFound=false;
+            'company_name':company_name
+        }
+        console.log("Find Query==>",findQuery);       
+          companyModel.find(findQuery,async function(err,company) {
+           if (company) {
+             console.log("Company found==>",company);
           var refference_codeArray=[];
-          refference_codeArray=company.refference_code;
-          console.log("department in comapny==>",refference_codeArray,refference_code);
-          
-
-          var dataRes = company.department;
-          var deptDataForVoting={
-
-          }
-           console.log(" Company data==>",  dataRes);
-
+          refference_codeArray=company[0].refference_code;
+          var dataRes = company[0].department;
+          var deptDataOfVoting={}
+           console.log(" Company data==>",  dataRes)
           for (var key in dataRes) {
             console.log("key==>",key);
            var deptData={
              count:0
            }
-            var updateQuery = 'deptDataForVoting.' + key;
-            deptDataForVoting[key] = deptData;
-            
-            if (key.toString() == department_name.toString()) {
-              isDeptartmentFound=true;
-              var isRefferenceCodeFound = search(refference_code, refference_codeArray);
-              console.log("department and reff code found ==>",isDeptartmentFound,isRefferenceCodeFound);
-            }
-
+            deptDataOfVoting[key] = deptData;  
           }
+         var isRefferenceCodeFound =await search(refference_code, refference_codeArray);
+          if (await isRefferenceCodeFound ) {
+           
+            req.body.deptDataOfVoting=deptDataOfVoting;
+            console.log("valid Data==>",req.body);   
+            if (req.body.deptDataOfVoting.hasOwnProperty(department_name)) {
+              console.log("deptDataOfVoting==>",req.body.deptDataOfVoting);
+              var passwordGenerated = generator.generate({
+                  length: 6,
+                  numbers: true
+                });
+                var phone_no=req.body.phone_no;
+                var userMsg='Congrats you are succesfully registerd for My union. Your password :'+passwordGenerated;
+              req.body.password = encode().value(passwordGenerated);
+              req.body.account_created = account_created;
 
-          if (isDeptartmentFound&&isRefferenceCodeFound ) {
-            console.log("valid Data==>",deptDataForVoting);
-            req.body.deptDataForVoting=deptDataForVoting;
-             let user = new usersModel(req.body);
-               user.save(req.body, function(err, user) {
+              let user = new usersModel(req.body);
+              user.save(req.body, function(err, user) {
                 if (err) {
                   console.log("Error in user save",err,user);
                   
@@ -201,7 +185,6 @@ const adminController = {
                   });
                 } 
                
-
                 else{
                   axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number='+ phone_no.trim() +'&text= '+ userMsg+'&route=6')
                   .then(response => {
@@ -228,10 +211,23 @@ const adminController = {
                   .catch(error => {
                     console.log(error);
                   });
-
-
                 }
               })
+            } else {
+              res.json({
+                isError: true,
+                data: 'Departement not found'
+              });
+            }
+              
+          }
+          else {
+            console.log("Not found==>",isRefferenceCodeFound);
+            
+            res.json({
+              isError: true,
+              data: 'match not found'
+            });
           }
           
         }
@@ -242,14 +238,8 @@ const adminController = {
           });
         }
         
-      })
-      }
-      else{
-        res.json({
-          isError: true,
-          data: 'please provide required fields'
-        });
-      }
+          })
+        
        }
        else{
         res.json({
@@ -265,7 +255,6 @@ const adminController = {
         console.log("decoded reqest from==>", decoded.role)
     
         if (decoded.role=='admin') {
-          var election_name=req.body.election_name;
          req.body.election_date=new Date(req.body.election_date);
 
         req.body.election_created=new Date();
@@ -302,12 +291,13 @@ const adminController = {
       console.log("decoded reqest from==>", decoded.role)
   
       if (decoded.role=='admin') { 
-        userElectionModel.find({
+        let findQuery={
           $and:[
             {election_name:req.body.election_name},
             {isApprove:false}
           ]
-        },function (err,userElection) {
+        }
+        userElectionModel.find(findQuery,function (err,userElection) {
           if (err) {
             res.json({
               isError: true,
@@ -415,12 +405,14 @@ const adminController = {
       console.log("decoded reqest from==>", decoded.role,accountNo)
 
       if (decoded.role=='admin') { 
-        usersModel.findOneAndUpdate({phone_no:phone_no},
-        {
+        var findQuery={phone_no:phone_no}
+        var updateQuery={
           $set:
             {transactionApprove:true}
           
-        },function (err,userApprove) {
+        }
+        usersModel.findOneAndUpdate(findQuery,
+        updateQuery,function (err,userApprove) {
           if (err) {
             res.json({
               isError: true,
@@ -465,8 +457,6 @@ const adminController = {
                 data:'Invalid Account'
               });
               }
-             
-
               
             }
 
@@ -580,16 +570,23 @@ const adminController = {
       console.log("decoded reqest from==>", decoded.role)
    
       if (decoded.role=='admin') { 
-        var html=`This is a notice...  Important to share with you..`;
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.end(html);
+        req.body.publishOn=new Date(req.body.publishOn)
+        let notice = new noticeModel(req.body);
+        notice.save(req.body, function(err, notice) {
+          if (err) {
+            res.json({
+              isError:true,
+              data:err
+            });
 
-        // res.json({
-        //   success:true,
-        //   data:html
-        // })
-
-
+          }
+          else{
+            res.json({
+              success:true,
+              data:notice
+            });
+          }
+        })
       }
       else{
         res.json({

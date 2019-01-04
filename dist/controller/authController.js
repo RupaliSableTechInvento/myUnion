@@ -11,13 +11,14 @@ function search(refference_code, refference_codeArray) {
   console.log("Search call");
 
   for (var i = 0; i < refference_codeArray.length; i++) {
-    if (refference_codeArray[i].code.toString() == refference_code.toString()) {
+    if (refference_codeArray[i].code == refference_code) {
       console.log("Search found==> True");
 
       return true;
     }
-    console.log("Search call", i);
+    console.log("Search call", i, refference_codeArray[i].code, refference_code);
     if (i > refference_codeArray.length) {
+      console.log("length end");
 
       return false;
     }
@@ -37,7 +38,7 @@ const authController = {
       // global.email = credential.email;
     };usersModel.find(query, (err, user) => {
       if (err) res.json(err);
-      if (user.length) {
+      if (user.length > 0) {
         console.log("User[0]=>", user);
         var d = new Date();
         var v = new Date();
@@ -95,7 +96,6 @@ const authController = {
         });
       } else {
         console.log("USer==>", user);
-
         res.json({
           isError: true,
           data: "Invalid User !"
@@ -111,16 +111,16 @@ const authController = {
         isError: true,
         tokenModel: err
       });else {
-        var emailObj = [];
+        var PhoneObj = [];
         console.log("trade model result", tokenModel.length);
         for (let index = 0; index < tokenModel.length; index++) {
-          emailObj.push(tokenModel[index].email);
+          PhoneObj.push(tokenModel[index].phone_no);
         }
-        console.log("active user email ", emailObj);
+        console.log("active user phone_no ", PhoneObj);
 
         usersModel.find({
-          'email': {
-            $in: emailObj
+          'phone_no': {
+            $in: PhoneObj
           }
         }, (err, user) => {
           if (err) return res.json({
@@ -140,118 +140,101 @@ const authController = {
   register: (req, res, next) => {
     console.log("req.body for register", req.body);
     var account_created = new Date();
-    var passwordGenerated = generator.generate({
-      length: 6,
-      numbers: true
-    });
-    var phone_no = req.body.phone_no;
-    var userMsg = 'Congrats you are succesfully registerd for My union. Your password :' + passwordGenerated;
-    req.body.password = encode().value(passwordGenerated);
-    req.body.account_created = account_created;
 
-    var isCompanyValid = false;
-    var isDeptartmentValid = false;
-    var isRefference_codeValid = false;
-    var isCompanyValid = req.body.company_name.length > 0 ? true : false;
-    var isDeptartmentValid = req.body.department_name.length > 0 ? true : false;
-    var isRefference_codeValid = req.body.refference_code.length > 0 ? true : false;
-    // console.log("Account Created==>", account_created,isCompanyValid,isDeptartmentValid,isRefference_codeValid);
+    var company_name = req.body.company_name;
+    var department_name = req.body.department_name;
+    var refference_code = req.body.refference_code;
 
-    if (isCompanyValid && isDeptartmentValid && isRefference_codeValid) {
-      var company_name = req.body.company_name;
-      var department_name = req.body.department_name;
-      var refference_code = req.body.refference_code;
-      companyModel.findOne({ 'company_name': company_name }, function (err, company) {
-        if (company) {
+    var findQuery = {
 
-          var isRefferenceCodeFound = false;
-          var isDeptartmentFound = false;
-          var refference_codeArray = [];
-          refference_codeArray = company.refference_code;
-          console.log("department in comapny==>", refference_codeArray, refference_code);
+      'company_name': company_name
+    };
+    console.log("Find Query==>", findQuery);
 
-          var dataRes = company.department;
-          var deptDataOfVoting = {};
-          console.log(" Company data==>", dataRes);
+    companyModel.find(findQuery, async function (err, company) {
+      if (company) {
+        console.log("Company found==>", company);
+        var refference_codeArray = [];
+        refference_codeArray = company[0].refference_code;
+        var dataRes = company[0].department;
+        var deptDataOfVoting = {};
+        console.log(" Company data==>", dataRes);
+        for (var key in dataRes) {
+          console.log("key==>", key);
+          var deptData = {
+            count: 0
+          };
+          deptDataOfVoting[key] = deptData;
+        }
+        var isRefferenceCodeFound = await search(refference_code, refference_codeArray);
+        if (await isRefferenceCodeFound) {
 
-          for (var key in dataRes) {
-            console.log("key==>", key);
-            var deptData = {
-              count: 0
-              // var updateQuery = 'deptDataOfVoting.' + key;
-            };deptDataOfVoting[key] = deptData;
+          req.body.deptDataOfVoting = deptDataOfVoting;
+          console.log("valid Data==>", req.body);
 
-            if (key.toString() == department_name.toString()) {
-              isDeptartmentFound = true;
-              var isRefferenceCodeFound = search(refference_code, refference_codeArray);
-              console.log("department and reff code found ==>", isDeptartmentFound, isRefferenceCodeFound);
-            }
-          }
+          if (req.body.deptDataOfVoting.hasOwnProperty(department_name)) {
+            console.log("deptDataOfVoting==>", req.body.deptDataOfVoting);
+            var passwordGenerated = generator.generate({
+              length: 6,
+              numbers: true
+            });
+            var phone_no = req.body.phone_no;
+            var userMsg = 'Congrats you are succesfully registerd for My union. Your password :' + passwordGenerated;
+            req.body.password = encode().value(passwordGenerated);
+            req.body.account_created = account_created;
 
-          if (isDeptartmentFound && isRefferenceCodeFound) {
+            let user = new usersModel(req.body);
+            user.save(req.body, function (err, user) {
+              if (err) {
+                console.log("Error in user save", err, user);
 
-            req.body.deptDataOfVoting = deptDataOfVoting;
-            console.log("valid Data==>", req.body);
+                res.json({
+                  isError: true,
+                  error: err
+                });
+              } else {
+                axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number=' + phone_no.trim() + '&text= ' + userMsg + '&route=6').then(response => {
 
-            if (req.body.deptDataOfVoting.hasOwnProperty(department_name)) {
-              console.log("deptDataOfVoting==>", req.body.deptDataOfVoting);
+                  companyModel.update({
+                    $and: [{ company_name: company_name }, { refference_code: { $elemMatch: { 'code': refference_code } } }]
 
-              let user = new usersModel(req.body);
-              user.save(req.body, function (err, user) {
-                if (err) {
-                  console.log("Error in user save", err, user);
+                  }, { $set: { "refference_code.$.isactive": true } }, function (err, result) {
+                    if (result.nModified) {
 
-                  res.json({
-                    isError: true,
-                    error: err
+                      console.log("refference code modified-->", result);
+
+                      res.json({
+                        sucess: true,
+                        data: user
+                      });
+                    }
                   });
-                } else {
-                  axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number=' + phone_no.trim() + '&text= ' + userMsg + '&route=6').then(response => {
-
-                    companyModel.update({
-                      $and: [{ company_name: company_name }, { refference_code: { $elemMatch: { 'code': refference_code } } }]
-
-                    }, { $set: { "refference_code.$.isactive": true } }, function (err, result) {
-                      if (result.nModified) {
-
-                        console.log("refference code modified-->", result);
-
-                        res.json({
-                          sucess: true,
-                          data: user
-                        });
-                      }
-                    });
-                  }).catch(error => {
-                    console.log(error);
-                  });
-                }
-              });
-            } else {
-              res.json({
-                isError: true,
-                data: 'Departement not found'
-              });
-            }
+                }).catch(error => {
+                  console.log(error);
+                });
+              }
+            });
           } else {
             res.json({
               isError: true,
-              data: 'match not found'
+              data: 'Departement not found'
             });
           }
         } else {
+          console.log("Not found==>", isRefferenceCodeFound);
+
           res.json({
             isError: true,
-            data: 'Company not found'
+            data: 'match not found'
           });
         }
-      });
-    } else {
-      res.json({
-        isError: true,
-        data: 'please provide required fields'
-      });
-    }
+      } else {
+        res.json({
+          isError: true,
+          data: 'Company not found'
+        });
+      }
+    });
   },
   logout: (req, res, next) => {
 

@@ -13,7 +13,8 @@
                     .attr('src', e.target.result)
                     .width(150)
                     .height(200);
-
+                    console.log("Image url==>",e.target.result);
+                    
                     $.ajax({
                             url: "http://localhost:3000/uploadProfilePhoto",
                             type: 'post',

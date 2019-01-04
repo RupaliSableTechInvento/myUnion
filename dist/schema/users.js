@@ -9,8 +9,6 @@ const usersSchema = new mongoose.Schema({
   },
   phone_no: {
     type: String,
-    index: true,
-    unique: true,
     required: true
   },
   dateOfBirth: {
@@ -18,6 +16,9 @@ const usersSchema = new mongoose.Schema({
   },
   email: {
     type: String
+  },
+  postInfo: {
+    type: Object
   },
   empID: {
     type: String,
@@ -43,7 +44,6 @@ const usersSchema = new mongoose.Schema({
   deptDataOfVoting: {
     type: Object,
     required: true
-
   },
 
   transactionApprove: {
@@ -81,7 +81,7 @@ const usersSchema = new mongoose.Schema({
 });
 
 usersSchema.plugin(uniqueValidator);
-usersSchema.index({ company_name: 1, empID: 1 }, { unique: true });
+usersSchema.index({ company_name: 1, empID: 1, phone_no: 1 }, { unique: true });
 
 // usersSchema.plugin(autoIncrement.plugin, 'id');
 

@@ -68,7 +68,7 @@ const routes = (route) => {
     .post(usersController.getAllCount)
   route.route('/forgotPassword')
     .post(usersController.forgotPassword)
-    route.route('/getOne')
+  route.route('/getOne')
     .post(usersController.getOne)
     
   route.route('/getUserInfo')
@@ -87,6 +87,9 @@ const routes = (route) => {
     .post(usersController.unSupport)
   route.route('/EditUserProfile')
     .post(usersController.EditUserProfile)
+    route.route('/addPost')
+    .post(usersController.addPost)
+    
 
   // Company API
   route.route('/addCompany')

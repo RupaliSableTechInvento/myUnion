@@ -1142,6 +1142,72 @@ const usersController = {
     })
 
 
+  },
+  addPost:(req,res,next)=>{
+    var decoded = jwt.verify(req.body.authorization, env.App_key);
+    var query={
+      phone_no:decoded.phone_no
+    }
+
+    var imageUrls = [];
+    var postInfo={
+    }
+    var imageUrl=req.body.imageUrl
+
+    if (imageUrl.isArray) {
+      console.log("image url is an Array-==>");
+      
+      for (var i = 0; i < imageUrl.length; i++) {
+        var baseId = Common.getAlphaNumericRandomString(6, '#a')
+        var base64Str = imageUrl[i];
+        console.log("base 64==<",base64Str,imageUrl);
+        
+        var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
+        var optionalObj = { 'fileName': baseId, 'type': 'png' };
+        var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
+        imageUrls.push({ url: '/Images/_' + imageInfo.fileName})
+      }
+    }
+    else{
+      console.log("image url is  Not an Array-==>");
+      var baseId = Common.getAlphaNumericRandomString(6, '#a')
+      var base64Str = imageUrl;
+      console.log("base 64==<",base64Str,imageUrl);
+      
+      var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
+      var optionalObj = { 'fileName': baseId, 'type': 'png' };
+      var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
+      imageUrls.push({ url: '/Images/_' + imageInfo.fileName})
+    }
+    postInfo.imageUrlsArr = imageUrls;
+    postInfo.post=req.body.post
+    postInfo.createdAT=new Date()
+    var addPostQuery={
+      $set:{
+        postInfo:postInfo
+      }
+    }
+    var options={new:true}
+
+    usersModel.findOneAndUpdate(query,addPostQuery,options,function (err,result) {
+      if (err) {
+        res.json({
+          isError:true,
+          error:err
+        })
+        
+      } else {
+        res.json({
+          success:true,
+          data:result
+        })
+        
+      }
+      
+    })
+
+
+
   }
 };
 

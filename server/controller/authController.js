@@ -11,14 +11,15 @@ function search(refference_code, refference_codeArray){
   console.log("Search call");
   
   for (var i=0; i < refference_codeArray.length; i++) {
-      if (refference_codeArray[i].code.toString() ==refference_code.toString()) {
+      if (refference_codeArray[i].code==refference_code) {
         console.log("Search found==> True");
         
           return true;
       }
-      console.log("Search call",i);
+      console.log("Search call",i,refference_codeArray[i].code,refference_code);
       if (i>refference_codeArray.length) {
-
+        console.log("length end");
+        
          return false;
       }
       
@@ -44,7 +45,7 @@ const authController = {
     // global.email = credential.email;
     usersModel.find(query, (err, user) => {
       if (err) res.json(err);
-      if (user.length) {
+      if (user.length>0) {
         console.log("User[0]=>", user)
         var d = new Date();
         var v = new Date();
@@ -103,7 +104,6 @@ const authController = {
         })
       } else {
         console.log("USer==>",user);
-        
         res.json({
           isError: true,
           data: "Invalid User !"
@@ -121,16 +121,16 @@ const authController = {
         tokenModel: err
       });
       else {
-        var emailObj = [];
+        var PhoneObj = [];
         console.log("trade model result", tokenModel.length);
         for (let index = 0; index < tokenModel.length; index++) {
-          emailObj.push(tokenModel[index].email);
+          PhoneObj.push(tokenModel[index].phone_no);
         }
-        console.log("active user email ", emailObj);
+        console.log("active user phone_no ", PhoneObj);
 
         usersModel.find({
-          'email': {
-            $in: emailObj
+          'phone_no': {
+            $in: PhoneObj
           }
         }, (err, user) => {
           if (err) return res.json({
@@ -151,68 +151,51 @@ const authController = {
   register: (req, res, next) => {
     console.log("req.body for register", req.body)
     var account_created = new Date();
-        var passwordGenerated = generator.generate({
-          length: 6,
-          numbers: true
-        });
-        var phone_no=req.body.phone_no;
-        var userMsg='Congrats you are succesfully registerd for My union. Your password :'+passwordGenerated;
-      req.body.password = encode().value(passwordGenerated);
-      req.body.account_created = account_created;
+        
 
-    
-      var isCompanyValid=false;
-      var isDeptartmentValid=false;
-      var isRefference_codeValid=false;
-      var isCompanyValid=(req.body.company_name.length>0)?true:false;
-      var isDeptartmentValid=(req.body.department_name.length>0)?true:false;
-      var isRefference_codeValid=(req.body.refference_code.length>0)?true:false;
-      // console.log("Account Created==>", account_created,isCompanyValid,isDeptartmentValid,isRefference_codeValid);
-
-      if ((isCompanyValid)&&(isDeptartmentValid)&&(isRefference_codeValid)) {
         var company_name=req.body.company_name;
         var department_name=req.body.department_name;
         var refference_code=req.body.refference_code;
-          companyModel.findOne({'company_name':company_name},  function (err,company) {
-        if (company) {
 
-          var isRefferenceCodeFound=false;
-          var isDeptartmentFound=false;
+
+        var findQuery={
+
+            'company_name':company_name
+        }
+        console.log("Find Query==>",findQuery);
+        
+          companyModel.find(findQuery,async function(err,company) {
+           if (company) {
+             console.log("Company found==>",company);
           var refference_codeArray=[];
-          refference_codeArray=company.refference_code;
-          console.log("department in comapny==>",refference_codeArray,refference_code);
-          
-
-          var dataRes = company.department;
-          var deptDataOfVoting={
-           
-          }
-           console.log(" Company data==>",  dataRes);
-          
-
+          refference_codeArray=company[0].refference_code;
+          var dataRes = company[0].department;
+          var deptDataOfVoting={}
+           console.log(" Company data==>",  dataRes)
           for (var key in dataRes) {
             console.log("key==>",key);
            var deptData={
              count:0
            }
-            // var updateQuery = 'deptDataOfVoting.' + key;
-            deptDataOfVoting[key] = deptData;
-            
-            if (key.toString() == department_name.toString()) {
-              isDeptartmentFound=true;
-              var isRefferenceCodeFound = search(refference_code, refference_codeArray);
-              console.log("department and reff code found ==>",isDeptartmentFound,isRefferenceCodeFound);
-            }
-
+            deptDataOfVoting[key] = deptData;  
           }
-        
-          if (isDeptartmentFound&&isRefferenceCodeFound ) {
+         var isRefferenceCodeFound =await search(refference_code, refference_codeArray);
+          if (await isRefferenceCodeFound ) {
            
             req.body.deptDataOfVoting=deptDataOfVoting;
             console.log("valid Data==>",req.body);
-
+            
+             
             if (req.body.deptDataOfVoting.hasOwnProperty(department_name)) {
               console.log("deptDataOfVoting==>",req.body.deptDataOfVoting);
+              var passwordGenerated = generator.generate({
+                  length: 6,
+                  numbers: true
+                });
+                var phone_no=req.body.phone_no;
+                var userMsg='Congrats you are succesfully registerd for My union. Your password :'+passwordGenerated;
+              req.body.password = encode().value(passwordGenerated);
+              req.body.account_created = account_created;
 
               let user = new usersModel(req.body);
               user.save(req.body, function(err, user) {
@@ -261,7 +244,9 @@ const authController = {
             }
               
           }
-          else{
+          else {
+            console.log("Not found==>",isRefferenceCodeFound);
+            
             res.json({
               isError: true,
               data: 'match not found'
@@ -276,14 +261,9 @@ const authController = {
           });
         }
         
-      })
-      }
-      else{
-        res.json({
-          isError: true,
-          data: 'please provide required fields'
-        });
-      }
+          })
+      
+    
   },
   logout: (req, res, next) => {
     
