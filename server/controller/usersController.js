@@ -6,7 +6,7 @@ var Common = require('../common')
 var messagesModel =require( '../models/messagesModel');
 var userElectionModel =require('../models/userElectionModel')
 var electionDetailsModel=require('../models/electionDetailsModel');
-var mail_responseModel =require( '../models/mail_responseModel')
+var postModel =require( '../models/postModel')
 // var postatrade =require( '../models/postatrade')
 var jwt =require( 'jsonwebtoken');
 var env =require( "../env");
@@ -325,7 +325,7 @@ const usersController = {
     
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     usersModel.find({
-      phone_no:decoded.phone_no
+      _id: decoded.id
     }, (err, users) => {
       if (err) return res.json({
         isError: true,
@@ -394,7 +394,7 @@ const usersController = {
       }
     usersModel.findOneAndUpdate({
 
-      phone_no:decoded.phone_no
+      _id: decoded.id
     }, req.body, {
       new: true
     }, (err, user) => {
@@ -488,7 +488,7 @@ const usersController = {
         }
       
       usersModel.findOneAndUpdate({
-        'phone_no': decoded.phone_no
+        _id: decoded.id
       }, query, {
         new: true
       }, (err, user) => {
@@ -733,9 +733,9 @@ const usersController = {
     req.body.new_pasword = encode().value(req.body.new_pasword);
     usersModel.findOneAndUpdate({
       $and: [{
-        "password": req.body.password
+        password: req.body.password
       }, {
-        "phone_no": decoded.phone_no
+        _id: decoded.id
       }]
     }, {
       $set: {
@@ -798,6 +798,9 @@ const usersController = {
 
         var query={
         }
+        req.body.phone_no=phone_no
+        req.body.empID=user[0].empID
+        req.body.user_id=decoded.id
         if (imageUrl) {
           var base64Str = req.body.imageUrl;
           var imageUrls = [];
@@ -813,9 +816,10 @@ const usersController = {
         } else {
           query=req.body
         }
-        req.body.phone_no=phone_no
-        req.body.empID=user[0].empID
-        let userElection = new userElectionModel(req.body);
+    
+        console.log("user _id==>", req.body.user_id);
+        
+        let userElection = new userElectionModel(query);
         userElection.save(query, function(err, user) {
           if (err) {
             res.json({
@@ -879,7 +883,7 @@ const usersController = {
         } else {
           console.log("Valid Voting==>",data.canvote);
           
-        usersModel.find({ phone_no:decoded.phone_no},function (err,result) {
+        usersModel.find({ _id: decoded.id},function (err,result) {
           if(err){
             res.json({
               isError: true,
@@ -1025,7 +1029,7 @@ const usersController = {
       } else {
 
         if (userElection.length>0) {
-          usersModel.find({ phone_no:decoded.phone_no},function (err,result) {
+          usersModel.find({ _id: decoded.id},function (err,result) {
             if(err){
               res.json({
                 isError: true,
@@ -1148,19 +1152,18 @@ const usersController = {
     var query={
       phone_no:decoded.phone_no
     }
-
     var imageUrls = [];
     var postInfo={
     }
     var imageUrl=req.body.imageUrl
-
+    var createdBy={}
     if (imageUrl.isArray) {
       console.log("image url is an Array-==>");
       
       for (var i = 0; i < imageUrl.length; i++) {
         var baseId = Common.getAlphaNumericRandomString(6, '#a')
         var base64Str = imageUrl[i];
-        console.log("base 64==<",base64Str,imageUrl);
+        // console.log("base 64==<",base64Str,imageUrl);
         
         var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
         var optionalObj = { 'fileName': baseId, 'type': 'png' };
@@ -1172,40 +1175,43 @@ const usersController = {
       console.log("image url is  Not an Array-==>");
       var baseId = Common.getAlphaNumericRandomString(6, '#a')
       var base64Str = imageUrl;
-      console.log("base 64==<",base64Str,imageUrl);
+      // console.log("base 64==<",base64Str,imageUrl);
       
       var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '');
       var optionalObj = { 'fileName': baseId, 'type': 'png' };
       var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
       imageUrls.push({ url: '/Images/_' + imageInfo.fileName})
     }
+ 
+   
+    createdBy={
+    full_name:decoded.full_name,
+    phone_no:decoded.phone_no,
+    id:decoded.id
+    }
+    console.log("Post created by==>",createdBy,decoded);
+    
     postInfo.imageUrlsArr = imageUrls;
     postInfo.post=req.body.post
-    postInfo.createdAT=new Date()
-    var addPostQuery={
-      $set:{
-        postInfo:postInfo
-      }
-    }
-    var options={new:true}
-
-    usersModel.findOneAndUpdate(query,addPostQuery,options,function (err,result) {
+    postInfo.createdBy=createdBy
+    console.log("Post Info==>",postInfo);
+    
+    let post= new postModel(postInfo)
+    post.save(postInfo,function (err,docs) {
       if (err) {
-        res.json({
+        return res.json({
           isError:true,
           error:err
         })
-        
       } else {
         res.json({
           success:true,
-          data:result
+          data:'Post added successfully'
         })
-        
       }
       
     })
-
+ 
 
 
   }

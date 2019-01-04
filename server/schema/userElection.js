@@ -20,6 +20,10 @@ const usersElectionSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  user_id:{
+    type: String,
+    required: true
+  },
   company_name:{
     type: String,
     required: true
@@ -39,7 +43,6 @@ const usersElectionSchema = new mongoose.Schema({
   isApprove: {
     type: Boolean,
     default: false,
-
   },
   imageUrl: {
     type: Array,
@@ -55,7 +58,7 @@ const usersElectionSchema = new mongoose.Schema({
 });
 
 
-usersElectionSchema.index({ election_name: 1, phone_no: 1}, { unique: true });
+usersElectionSchema.index({ election_name: 1, user_id: 1}, { unique: true });
 usersElectionSchema.plugin(uniqueValidator);
 // usersSchema.plugin(autoIncrement.plugin, 'id');
 

@@ -46,6 +46,7 @@ const authController = {
         const token1 = jwt.sign({
           phone_no: user[0].phone_no,
           id: user[0]._id,
+          name: user[0].full_name,
           role: 'user',
           expiry: v
         }, env.App_key);
