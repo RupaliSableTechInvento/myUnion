@@ -504,7 +504,7 @@ const usersController = {
       } else {
         res.json({
           isError: true,
-        
+          data: 'Unable to upload'
         })
       }
    
@@ -1201,7 +1201,7 @@ const usersController = {
       if (err) {
         return res.json({
           isError:true,
-          error:err
+          data:err
         })
       } else {
         res.json({

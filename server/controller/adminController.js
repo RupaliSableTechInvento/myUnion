@@ -181,7 +181,7 @@ const adminController = {
                   
                     res.json({
                     isError: true,
-                    error: err
+                    data: err
                   });
                 } 
                
@@ -244,7 +244,7 @@ const adminController = {
        else{
         res.json({
           isError: true,
-          error: 'Unauthorized Access'
+          data: 'Unauthorized Access'
         });
        }
         
@@ -279,7 +279,7 @@ const adminController = {
         else{
           res.json({
             isError: true,
-            error: 'Unauthorized Access'
+            data: 'Unauthorized Access'
           });
          }
 
@@ -330,7 +330,7 @@ const adminController = {
       else{
         res.json({
           isError:true,
-          error:'Unauthorized access'
+          data:'Unauthorized access'
         })
       }
       
@@ -465,7 +465,7 @@ const adminController = {
           .catch(error => {
             res.json({
            isError: true,
-           error: error
+           data: error
          });
           });
 
@@ -492,7 +492,7 @@ const adminController = {
           if (err) {
             res.json({
               isError:true,
-              error:err
+              data:err
             })
             
           } else {
@@ -501,7 +501,7 @@ const adminController = {
              if (error) {
               res.json({
                 isError:true,
-                err:error
+                data:error
               })
              } else {
               res.json({
@@ -519,7 +519,7 @@ const adminController = {
       else{
         res.json({
           isError:true,
-          error:'Unauthorized access'
+          data:'Unauthorized access'
         })
 
       }
@@ -537,7 +537,7 @@ const adminController = {
           if (err) {
             res.json({
               isError:true,
-              error:err
+              data:err
             })
             
           } else {
@@ -554,7 +554,7 @@ const adminController = {
       else{
         res.json({
           isError:true,
-          error:'Unauthorized access'
+          data:'Unauthorized access'
         })
 
       }
@@ -591,7 +591,7 @@ const adminController = {
       else{
         res.json({
           isError:true,
-          error:'Unauthorized access'
+          data:'Unauthorized access'
         })
       }
     }

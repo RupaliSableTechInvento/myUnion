@@ -176,7 +176,7 @@ const companyController = {
             
                                  company.save(function (err,company) {
                                      if (err) {
-                                        res.send({success: false,data: err});
+                                        res.send({ isError:true,data: err});
                                      } else {
                                         res.send({success: true,data: company});
                                      }

@@ -99,7 +99,7 @@ const fightingFundController = {
           .catch(error => {
             res.json({
            isError: true,
-           error: error
+           data: error
          });
           });
 
@@ -110,7 +110,7 @@ const fightingFundController = {
         else{
          res.json({
            isError: true,
-           error: 'Unauthorized Access'
+           data: 'Unauthorized Access'
          });
         }
   

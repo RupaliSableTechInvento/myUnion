@@ -119,7 +119,7 @@ const authController = {
     }, (err, tokenModel) => {
       if (err) return res.json({
         isError: true,
-        tokenModel: err
+        data: err
       });
       else {
         var PhoneObj = [];
@@ -136,7 +136,7 @@ const authController = {
         }, (err, user) => {
           if (err) return res.json({
             isError: true,
-            user: err
+            data: err
           });
           else {
             return res.json({
@@ -205,7 +205,7 @@ const authController = {
                   
                     res.json({
                     isError: true,
-                    error: err
+                    data: err
                   });
                 } 
                
