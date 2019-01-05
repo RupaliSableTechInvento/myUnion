@@ -94,11 +94,8 @@ const authController = {
               res.json({
                 sucess: true,
                 data: token1,
-                user: {
-                  phone_no: user[0].phone_no,
-                  full_name: user[0].full_name,
-                  id: user[0]._id
-                }
+                userData:  user[0]
+                
               });
             })
           }

@@ -175,7 +175,7 @@ const adminController = {
 
                   res.json({
                     isError: true,
-                    error: err
+                    data: err
                   });
                 } else {
                   axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number=' + phone_no.trim() + '&text= ' + userMsg + '&route=6').then(response => {
@@ -223,7 +223,7 @@ const adminController = {
     } else {
       res.json({
         isError: true,
-        error: 'Unauthorized Access'
+        data: 'Unauthorized Access'
       });
     }
   },
@@ -253,7 +253,7 @@ const adminController = {
     } else {
       res.json({
         isError: true,
-        error: 'Unauthorized Access'
+        data: 'Unauthorized Access'
       });
     }
   },
@@ -290,7 +290,7 @@ const adminController = {
     } else {
       res.json({
         isError: true,
-        error: 'Unauthorized access'
+        data: 'Unauthorized access'
       });
     }
   },
@@ -399,7 +399,7 @@ const adminController = {
           }).catch(error => {
             res.json({
               isError: true,
-              error: error
+              data: error
             });
           });
         }
@@ -422,7 +422,7 @@ const adminController = {
         if (err) {
           res.json({
             isError: true,
-            error: err
+            data: err
           });
         } else {
           tokenModel.findOneAndUpdate({ phone_no: phone_no }, { sort: { 'expiry': -1 } }, { $set: { isActive: false } }, { new: true }, function (error, data) {
@@ -430,7 +430,7 @@ const adminController = {
             if (error) {
               res.json({
                 isError: true,
-                err: error
+                data: error
               });
             } else {
               res.json({
@@ -444,7 +444,7 @@ const adminController = {
     } else {
       res.json({
         isError: true,
-        error: 'Unauthorized access'
+        data: 'Unauthorized access'
       });
     }
   },
@@ -459,7 +459,7 @@ const adminController = {
         if (err) {
           res.json({
             isError: true,
-            error: err
+            data: err
           });
         } else {
 
@@ -472,7 +472,7 @@ const adminController = {
     } else {
       res.json({
         isError: true,
-        error: 'Unauthorized access'
+        data: 'Unauthorized access'
       });
     }
   },
@@ -501,7 +501,7 @@ const adminController = {
     } else {
       res.json({
         isError: true,
-        error: 'Unauthorized access'
+        data: 'Unauthorized access'
       });
     }
   }

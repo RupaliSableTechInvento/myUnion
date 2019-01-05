@@ -86,11 +86,8 @@ const authController = {
               res.json({
                 sucess: true,
                 data: token1,
-                user: {
-                  phone_no: user[0].phone_no,
-                  full_name: user[0].full_name,
-                  id: user[0]._id
-                }
+                userData: user[0]
+
               });
             });
           }
@@ -110,7 +107,7 @@ const authController = {
     }, (err, tokenModel) => {
       if (err) return res.json({
         isError: true,
-        tokenModel: err
+        data: err
       });else {
         var PhoneObj = [];
         console.log("trade model result", tokenModel.length);
@@ -126,7 +123,7 @@ const authController = {
         }, (err, user) => {
           if (err) return res.json({
             isError: true,
-            user: err
+            data: err
           });else {
             return res.json({
               sucess: true,
@@ -191,7 +188,7 @@ const authController = {
 
                 res.json({
                   isError: true,
-                  error: err
+                  data: err
                 });
               } else {
                 axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number=' + phone_no.trim() + '&text= ' + userMsg + '&route=6').then(response => {
