@@ -562,8 +562,67 @@ const adminController = {
 
     },
     deactiveCandidate:(req,res,next)=>{
+      var token1=  req.body.authorization;
+      var decoded = jwt.verify(token1, env.App_key);
+      console.log("deactiveCandidate reqest from==>", decoded.role)
+      var _id=req.body._id;
+      if (decoded.role=='admin') { 
+        userElectionModel.findOneAndUpdate({_id:mongoose.Types.ObjectId(_id)},
+        {
+          $set:
+            {isApprove:false}
+          
+        },function (err,userElection) {
+          if (err) {
+            res.json({
+              isError: true,
+              data: err
+            })
+            
+          } else {
+            console.log(userElection);
+            
+            var election_name=userElection.election_name;
+            var emplID=userElection._id
+            var dataObj={
+              candidate:_id,
+              support:0
+            }
+
+            query = {election_name:election_name},
+            update = {  
+              $pull: { candidateData: dataObj } 
+            },
+            options = {new: true};
+            electionDetailsModel.findOneAndUpdate(query,update,options,function (error,electionDetails) {
+              if (error) {
+                res.json({
+                  isError: true,
+                  data: error
+                })
+                
+              } else {
+                res.json({
+                  success: true,
+                  data: {userElection:userElection,electionDetails:electionDetails}
+                })
+                
+              }
+            })
+         
+          }
+          
+        })
+      }
+      else{
+        res.json({
+          isError:true,
+          data:'Unauthorised Access'
+        })
+      }
       
     },
+  
     addNotice:(req,res,next)=>{
       var token1=  req.body.authorization;
       var decoded = jwt.verify(token1, env.App_key);

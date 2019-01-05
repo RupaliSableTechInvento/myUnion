@@ -1,14 +1,10 @@
-var adminModel=require( '../models/adminModel')
-var usersModel =require( './../models/usersModel');
-var tokenModel =require( './../models/tokenModel');
-var companyModel =require( '../models/companyModel');
+
 var electionDetailsModel=require('../models/electionDetailsModel');
+var userElectionModel=require('../models/userElectionModel');
+
 var jwt =require( 'jsonwebtoken');
 var env =require( "../env");
-var mongoose = require('mongoose');
-var encode = require('hashcode').hashCode;
-var generator = require('generate-password');
-const axios = require('axios');
+
 
 
 const electionController = {
@@ -108,7 +104,26 @@ const electionController = {
 
     }
 
-  }
+  },
+  getAllApproveCandidate:(req,res,next)=>{
+    userElectionModel.find({isApprove:true},
+    function (err,userElection) {
+      if (err) {
+        res.json({
+          isError: true,
+          data: err
+        })
+        
+      } else {
+        res.json({
+          success: true,
+          data: userElection
+        })
+     
+      }
+      
+    })
+  },
   
 };
 

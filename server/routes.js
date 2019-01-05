@@ -47,10 +47,16 @@ const routes = (route) => {
     .post(adminController.candidateReq)
   route.route('/approveCandidateReq')
     .post(adminController.approveCandidateReq)
+    route.route('/getAllApproveCandidate')
+    .get(electionController.getAllApproveCandidate)
+
+    
 // Approve Transaction
   route.route('/approveTransactionReq')
     .post(adminController.approveTransactionReq);
-
+    route.route('/deactiveCandidate')
+    .post(adminController.deactiveCandidate);
+    
   // Authentication API
 
   route.route('/login')
