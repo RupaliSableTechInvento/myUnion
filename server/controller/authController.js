@@ -95,7 +95,6 @@ const authController = {
                 sucess: true,
                 data: token1,
                 userData:  user[0]
-                
               });
             })
           }
