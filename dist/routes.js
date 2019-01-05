@@ -59,6 +59,7 @@ const routes = route => {
   route.route('/unSupport').post(usersController.unSupport);
   route.route('/EditUserProfile').post(usersController.EditUserProfile);
   route.route('/addPost').post(usersController.addPost);
+  route.route('/getUserPost').post(usersController.getUserPost);
 
   // Company API
   route.route('/addCompany').post(companyController.addCompany);

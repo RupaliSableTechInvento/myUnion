@@ -469,7 +469,6 @@ const usersController = {
   },
   uploadProfilePhoto: (req, res, next) => {
     // var id = mongoose.Types.ObjectId(req.body.id);
-
       var base64Str = req.body.imageUrl;
       var decoded = jwt.verify(req.body.authorization, env.App_key);
       if (base64Str) {
@@ -552,7 +551,6 @@ const usersController = {
         
           axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number='+ phone_no.trim() +'&text= '+ userMsg+'&route=6')
           .then(response => {
-
 
             usersModel.update({
               $and: [{ phone_no: phone_no  }]
@@ -807,7 +805,7 @@ const usersController = {
           var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '_');
           console.log("Folder path==>",folderPath);
           var baseId = Common.getAlphaNumericRandomString(6, '#a')
-        var optionalObj = { 'fileName': baseId, 'type': 'png' };
+          var optionalObj = { 'fileName': baseId, 'type': 'png' };
           var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
           imageUrls.push({ url: '/Images/_' + imageInfo.fileName, })
           req.body.imageUrl=imageUrls;
@@ -871,132 +869,132 @@ const usersController = {
       } else {
 
         if (userElection.length>0) {
-          
-    addSupport(ajax_data, function(err, data) {
-      if (err) {
-        res.send({ success: false, data: err });
-      } else {
-        console.log("Addsupport ==>>",data);
-        if (data.canVote==false) {
-          res.send({ success: false, data: 'Limit Reached' });
-          
-        } else {
-          console.log("Valid Voting==>",data.canvote);
-          
-        usersModel.find({ _id: decoded.id},function (err,result) {
-          if(err){
-            res.json({
-              isError: true,
-              data: err
-            });
-          }
-          else{
-            var company_name=data.userElection[0].company_name;
-            var department_name=data.userElection[0].department_name
-            var supportArray=result[0].support
-            var isAlreadyVote=search(election_name,candidate, supportArray)
-
-            if (isAlreadyVote) {
-              res.json({
-                isError:true,
-                data:'Invalid Attempt'
-              })
               
+          addSupport(ajax_data, function(err, data) {
+            if (err) {
+              res.send({ success: false, data: err });
             } else {
-              
-            var dataObj={
-              election_name:req.body.election_name,
-              candidate:req.body.candidate,
-              company_name:company_name,
-              department_name:department_name,
-              date:new Date()
-            }
-            var q1='deptDataOfVoting.'+department_name
-          var queryString=q1+'.count';
-          
-            query = { $and:[
-              { phone_no:decoded.phone_no},
-              {"support":{ $not: {$elemMatch: { candidate} } }}
-            ]},
-            update = {
-              $inc: { [queryString]: 1 } ,
-              $push: { support: dataObj } 
-            },
-            options = {upsert: true};
-            
-          usersModel.findOneAndUpdate(
-          query,update,options
-        ,function (err,user) {
-          if (err) {
-            res.json({
-              isError: true,
-              data: err
-            });
-            
-          } else {
-            console.log("add support  result==>",user);
-
-            electionDetailsModel.find({ election_name:req.body.election_name},
-              
-              function (err,electionDetails) {
-              if (err) {
-                res.json({
-                  isError: true,
-                  data: err
-                });
+              console.log("Addsupport ==>>",data);
+              if (data.canVote==false) {
+                res.send({ success: false, data: 'Limit Reached' });
                 
               } else {
+                console.log("Valid Voting==>",data.canvote);
+                
+              usersModel.find({ _id: decoded.id},function (err,result) {
+                if(err){
+                  res.json({
+                    isError: true,
+                    data: err
+                  });
+                }
+                else{
+                  var company_name=data.userElection[0].company_name;
+                  var department_name=data.userElection[0].department_name
+                  var supportArray=result[0].support
+                  var isAlreadyVote=search(election_name,candidate, supportArray)
 
-                console.log("Election Details==>",electionDetails);
-              
-                var candidateData= electionDetails[0].candidateData;
-                candidateData.forEach((item, index) => {
-                  if (item.candidate == req.body.candidate) {
-                    electionDetailsModel.findOneAndUpdate(
-                  {
-                    $and:[
-                      { election_name:req.body.election_name},
-                      {[`candidateData.${index}.candidate`]: req.body.candidate}
-                    ]
-                  }, { $inc: { [`candidateData.${index}.support`]: 1 } },{new:true},function (err,result) {
+                  if (isAlreadyVote) {
+                    res.json({
+                      isError:true,
+                      data:'Invalid Attempt'
+                    })
+                    
+                  } else {
+                    
+                  var dataObj={
+                    election_name:req.body.election_name,
+                    candidate:req.body.candidate,
+                    company_name:company_name,
+                    department_name:department_name,
+                    date:new Date()
+                  }
+                  var q1='deptDataOfVoting.'+department_name
+                var queryString=q1+'.count';
+                
+                  query = { $and:[
+                    { phone_no:decoded.phone_no},
+                    {"support":{ $not: {$elemMatch: { candidate} } }}
+                  ]},
+                  update = {
+                    $inc: { [queryString]: 1 } ,
+                    $push: { support: dataObj } 
+                  },
+                  options = {upsert: true};
+                  
+                usersModel.findOneAndUpdate(
+                query,update,options
+              ,function (err,user) {
+                if (err) {
+                  res.json({
+                    isError: true,
+                    data: err
+                  });
+                  
+                } else {
+                  console.log("add support  result==>",user);
+
+                  electionDetailsModel.find({ election_name:req.body.election_name},
+                    
+                    function (err,electionDetails) {
                     if (err) {
                       res.json({
                         isError: true,
                         data: err
                       });
-                    }
-                    else{
-                      console.log(" support added result==>",result);
-          
-                      res.json({
-                        success: true,
-                        data: result
-                      });
-                    }
+                      
+                    } else {
+
+                      console.log("Election Details==>",electionDetails);
+                    
+                      var candidateData= electionDetails[0].candidateData;
+                      candidateData.forEach((item, index) => {
+                        if (item.candidate == req.body.candidate) {
+                          electionDetailsModel.findOneAndUpdate(
+                        {
+                          $and:[
+                            { election_name:req.body.election_name},
+                            {[`candidateData.${index}.candidate`]: req.body.candidate}
+                          ]
+                        }, { $inc: { [`candidateData.${index}.support`]: 1 } },{new:true},function (err,result) {
+                          if (err) {
+                            res.json({
+                              isError: true,
+                              data: err
+                            });
+                          }
+                          else{
+                            console.log(" support added result==>",result);
+                
+                            res.json({
+                              success: true,
+                              data: result
+                            });
+                          }
+                          
+                        })
+
+                        }
+                      
+                    })
+                  }
                     
                   })
 
-                  }
+                
+                }
                 
               })
+
+                }
+                
+                }
+                
+              })
+              }
+            
             }
-              
-            })
-
-          
-          }
-          
-        })
-
-          }
-          
-          }
-          
-        })
-        }
-      
-      }
-    })
+          })
         }
         else{
           res.json({
@@ -1182,12 +1180,10 @@ const usersController = {
       var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
       imageUrls.push({ url: '/Images/_' + imageInfo.fileName})
     }
- 
-   
     createdBy={
     full_name:decoded.full_name,
     phone_no:decoded.phone_no,
-    id:decoded.id
+    user_id:decoded.id
     }
     console.log("Post created by==>",createdBy,decoded);
     
@@ -1213,6 +1209,36 @@ const usersController = {
     })
  
 
+
+  },
+  getUserPost:(req,res,next)=>{  
+    user_id=req.body.user_id
+    console.log("getUserPost==>",user_id);
+    
+    postModel.find({'createdBy.user_id':user_id},function (err,result) {
+      if (err) {
+        res.json({
+          isError:true,
+          data:err
+        })
+        
+      } else {
+        if (result.length) {
+          res.json({
+            success:true,
+            data:result
+          })
+        } else {
+          res.json({
+            isError:true,
+            data:'No post found'
+          })
+        }
+      
+        
+      }
+      
+    })
 
   }
 };

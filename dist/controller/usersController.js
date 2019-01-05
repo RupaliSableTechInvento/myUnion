@@ -411,7 +411,6 @@ const usersController = {
   },
   uploadProfilePhoto: (req, res, next) => {
     // var id = mongoose.Types.ObjectId(req.body.id);
-
     var base64Str = req.body.imageUrl;
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     if (base64Str) {
@@ -1027,11 +1026,10 @@ const usersController = {
       var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
       imageUrls.push({ url: '/Images/_' + imageInfo.fileName });
     }
-
     createdBy = {
       full_name: decoded.full_name,
       phone_no: decoded.phone_no,
-      id: decoded.id
+      user_id: decoded.id
     };
     console.log("Post created by==>", createdBy, decoded);
 
@@ -1052,6 +1050,31 @@ const usersController = {
           success: true,
           data: 'Post added successfully'
         });
+      }
+    });
+  },
+  getUserPost: (req, res, next) => {
+    user_id = req.body.user_id;
+    console.log("getUserPost==>", user_id);
+
+    postModel.find({ 'createdBy.user_id': user_id }, function (err, result) {
+      if (err) {
+        res.json({
+          isError: true,
+          data: err
+        });
+      } else {
+        if (result.length) {
+          res.json({
+            success: true,
+            data: result
+          });
+        } else {
+          res.json({
+            isError: true,
+            data: 'No post found'
+          });
+        }
       }
     });
   }
