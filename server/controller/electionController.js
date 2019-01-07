@@ -156,7 +156,8 @@ const electionController = {
                    phone_no:element.phone_no,
                    imageUrl:element.imageUrl,
                    status:element.status,
-                   support:item.support
+                   support:item.support,
+                   department_name:element.department_name
                  }
                
                  resultObj.push(data)
