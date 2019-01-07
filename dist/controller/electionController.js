@@ -129,7 +129,8 @@ const electionController = {
                       imageUrl: element.imageUrl,
                       status: element.status,
                       support: item.support,
-                      department_name: element.department_name
+                      department_name: element.department_name,
+                      company_name: element.company_name
                     };
 
                     resultObj.push(data);
