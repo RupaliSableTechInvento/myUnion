@@ -35,7 +35,7 @@ const routes = route => {
   route.route('/addNotice').post(adminController.addNotice);
   route.route('/candidateReq').post(adminController.candidateReq);
   route.route('/approveCandidateReq').post(adminController.approveCandidateReq);
-  route.route('/getAllApproveCandidate').get(electionController.getAllApproveCandidate);
+  route.route('/getAllApproveCandidate').post(electionController.getAllApproveCandidate);
 
   // Approve Transaction
   route.route('/approveTransactionReq').post(adminController.approveTransactionReq);
