@@ -793,7 +793,7 @@ const usersController = {
               } else {
                 console.log("Valid Voting==>", data.canVote);
 
-                usersModel.find({ _id: decoded.id }, async function (err, result) {
+                usersModel.find({ _id: mongoose.Types.ObjectId(decoded.id) }, async function (err, result) {
                   if (err) {
                     res.json({
                       isError: true,
@@ -821,7 +821,7 @@ const usersController = {
                       var q1 = 'deptDataOfVoting.' + department_name;
                       var queryString = q1 + '.count';
 
-                      query = { $and: [{ phone_no: decoded.phone_no }, { "support": { $not: { $elemMatch: { candidate } } } }] }, update = {
+                      query = { $and: [{ _id: mongoose.Types.ObjectId(decoded.id) }, { "support": { $not: { $elemMatch: { candidate } } } }] }, update = {
                         $inc: { [queryString]: 1 },
                         $push: { support: dataObj }
                       }, options = { upsert: true };
@@ -927,7 +927,7 @@ const usersController = {
                 var q1 = 'deptDataOfVoting.' + department_name;
                 var queryString = q1 + '.count';
 
-                query = { $and: [{ phone_no: decoded.phone_no }, { "support": { $elemMatch: { candidate } } }] }, update = {
+                query = { $and: [{ _id: mongoose.Types.ObjectId(decoded.id) }, { "support": { $elemMatch: { candidate } } }] }, update = {
                   $inc: { [queryString]: -1 },
                   $unset: { support: { $elemMatch: { candidate: 1 } } }
                 },

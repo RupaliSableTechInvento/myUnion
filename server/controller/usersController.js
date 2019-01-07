@@ -883,7 +883,7 @@ const usersController = {
               } else {
                 console.log("Valid Voting==>",data.canVote);
                 
-              usersModel.find({ _id: decoded.id},async function (err,result) {
+              usersModel.find({ _id: mongoose.Types.ObjectId(decoded.id)},async function (err,result) {
                 if(err){
                   res.json({
                     isError: true,
@@ -914,7 +914,7 @@ const usersController = {
                 var queryString=q1+'.count';
                 
                   query = { $and:[
-                    { phone_no:decoded.phone_no},
+                    { _id: mongoose.Types.ObjectId(decoded.id)},
                     {"support":{ $not: {$elemMatch: { candidate} } }}
                   ]},
                   update = {
@@ -1052,7 +1052,7 @@ const usersController = {
               var queryString=q1+'.count';
             
               query = { $and:[
-                { phone_no:decoded.phone_no},
+                { _id: mongoose.Types.ObjectId(decoded.id)},
                 {"support": {$elemMatch: { candidate} } }
               ]},
               update = {
