@@ -36,7 +36,7 @@ function addSupport(ajax_data, mainCallback) {
 
   var results = {};
   var candidate = ajax_data.candidate;
-  var phone_no = ajax_data.phone_no;
+  var id = ajax_data.id;
 
   function _isValidCandidate(callback) {
     console.log("_isValidCandidate");
@@ -62,9 +62,9 @@ function addSupport(ajax_data, mainCallback) {
       if (err) {
         callback(err);
       } else {
-        console.log("_getDeptVoteCount==>", department);
+        // console.log("_getDeptVoteCount==>",department);
         var getDept = department[0].department;
-        console.log("Department==>", getDept);
+        // console.log("Department==>",getDept);
         Object.keys(getDept).forEach(function (key) {
           if (key == department_name) {
             results.department = getDept[key];
@@ -76,19 +76,21 @@ function addSupport(ajax_data, mainCallback) {
   }
 
   function _validateVoting(results, callback) {
-    console.log("_validateVoting", results, phone_no);
-    usersModel.findOne({ phone_no: phone_no }, function (err, user) {
+    console.log("_validateVoting", results);
+    usersModel.find({ _id: mongoose.Types.ObjectId(id) }, function (err, user) {
       if (err) {
         callback(err);
       } else {
 
-        var deptData = user.deptDataOfVoting;
-        console.log("_validateVoting data==>", deptData);
+        var deptData = user[0].deptDataOfVoting;
+        console.log("_validateVoting data==>", user[0]);
 
         var department_name = results.userElection[0].department_name;
         var assignDeptCount = results.department.voteCount;
 
         Object.keys(deptData).forEach(function (key) {
+          console.log("Object.keys(deptData)==>", deptData);
+
           if (key == department_name) {
             console.log("key matched", deptData[key].count, key, department_name);
 
@@ -98,7 +100,7 @@ function addSupport(ajax_data, mainCallback) {
               results.canVote = false;
               callback(null, results);
             } else {
-              results.canvote = true;
+              results.canVote = true;
               callback(null, results);
             }
           }
@@ -381,9 +383,7 @@ const usersController = {
   getOne: (req, res, next) => {
     // console.log("------------",next);
     var decoded = jwt.verify(req.body.authorization, env.App_key);
-    usersModel.findOne({
-      'phone_no': decoded.phone_no
-    }, (err, user) => {
+    usersModel.find({ _id: mongoose.Types.ObjectId(decoded.id) }, (err, user) => {
       if (err) {
         res.json({
           isError: true,
@@ -392,7 +392,7 @@ const usersController = {
       } else {
         res.json({
           success: true,
-          data: user
+          data: user[0]
         });
       }
     });
@@ -486,7 +486,7 @@ const usersController = {
             numbers: true
           });
           var userName = result[0].full_name;
-          var userMsg = 'Hello ' + userName + ' ,your new account details are ,Mobile No:' + result[0].phone_no + 'and password: ' + passwordGenerated;
+          var userMsg = 'Hello ' + userName + ' ,your new account details are ,Mobile No: ' + result[0].phone_no + ' and password: ' + passwordGenerated;
           var new_pasword = encode().value(passwordGenerated);
 
           axios.get('http://sms.swebsolutions.in/api/mt/SendSMS?user=WEBSOLUTION&password=swsmymv*13&senderid=SWSCOM&channel=Trans&DCS=0&flashsms=0&number=' + phone_no.trim() + '&text= ' + userMsg + '&route=6').then(response => {
@@ -761,7 +761,6 @@ const usersController = {
   addSupport: (req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     console.log("add support request==>", decoded.phone_no);
-    var election_name = req.body.election_name;
     var candidate = req.body.candidate;
 
     // candidate is candidate _id from userElection
@@ -779,20 +778,22 @@ const usersController = {
           var ajax_data = {
             election_name: election_name,
             candidate: req.body.candidate,
-            phone_no: decoded.phone_no
-
+            id: decoded.id
           };
           addSupport(ajax_data, function (err, data) {
             if (err) {
-              res.send({ success: false, data: err });
+              res.send({ isError: true, data: err });
             } else {
               console.log("Addsupport ==>>", data);
               if (data.canVote == false) {
-                res.send({ success: false, data: 'Limit Reached' });
+                res.json({
+                  isError: true,
+                  data: 'Limit Reached'
+                });
               } else {
-                console.log("Valid Voting==>", data.canvote);
+                console.log("Valid Voting==>", data.canVote);
 
-                usersModel.find({ _id: decoded.id }, function (err, result) {
+                usersModel.find({ _id: decoded.id }, async function (err, result) {
                   if (err) {
                     res.json({
                       isError: true,
@@ -802,17 +803,16 @@ const usersController = {
                     var company_name = data.userElection[0].company_name;
                     var department_name = data.userElection[0].department_name;
                     var supportArray = result[0].support;
-                    var isAlreadyVote = search(election_name, candidate, supportArray);
+                    var isAlreadyVote = await search(election_name, candidate, supportArray);
 
-                    if (isAlreadyVote) {
+                    if (await isAlreadyVote) {
                       res.json({
                         isError: true,
                         data: 'Invalid Attempt'
                       });
                     } else {
-
                       var dataObj = {
-                        election_name: req.body.election_name,
+                        election_name: election_name,
                         candidate: req.body.candidate,
                         company_name: company_name,
                         department_name: department_name,
@@ -835,7 +835,7 @@ const usersController = {
                         } else {
                           console.log("add support  result==>", user);
 
-                          electionDetailsModel.find({ election_name: req.body.election_name }, function (err, electionDetails) {
+                          electionDetailsModel.find({ election_name: election_name }, function (err, electionDetails) {
                             if (err) {
                               res.json({
                                 isError: true,
@@ -849,7 +849,7 @@ const usersController = {
                               candidateData.forEach((item, index) => {
                                 if (item.candidate == req.body.candidate) {
                                   electionDetailsModel.findOneAndUpdate({
-                                    $and: [{ election_name: req.body.election_name }, { [`candidateData.${index}.candidate`]: req.body.candidate }]
+                                    $and: [{ election_name: election_name }, { [`candidateData.${index}.candidate`]: req.body.candidate }]
                                   }, { $inc: { [`candidateData.${index}.support`]: 1 } }, { new: true }, function (err, result) {
                                     if (err) {
                                       res.json({
@@ -890,15 +890,9 @@ const usersController = {
 
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     console.log("unSupport  request==>", decoded.phone_no);
-    var election_name = req.body.election_name;
+
     var candidate = req.body.candidate;
 
-    var ajax_data = {
-      election_name: req.body.election_name,
-      candidate: req.body.candidate,
-      phone_no: decoded.phone_no
-
-    };
     userElectionModel.find({ _id: mongoose.Types.ObjectId(candidate) }, function (err, userElection) {
       if (err) {
         res.json({
@@ -908,7 +902,9 @@ const usersController = {
       } else {
 
         if (userElection.length > 0) {
-          usersModel.find({ _id: decoded.id }, function (err, result) {
+          var election_name = userElection[0].election_name;
+
+          usersModel.find({ _id: mongoose.Types.ObjectId(decoded.id) }, async function (err, result) {
             if (err) {
               res.json({
                 isError: true,
@@ -918,9 +914,10 @@ const usersController = {
 
               var department_name = userElection[0].department_name;
               var supportArray = result[0].support;
-              var isAlreadyVote = search(election_name, candidate, supportArray);
+              var isAlreadyVote = await search(election_name, candidate, supportArray);
+              console.log("|isAlreadyVote in unsupport==>", (await isAlreadyVote));
 
-              if (!isAlreadyVote) {
+              if (await !isAlreadyVote) {
                 res.json({
                   isError: true,
                   data: 'Invalid Attempt'
@@ -947,7 +944,7 @@ const usersController = {
                   } else {
                     console.log("Un support  result==>", user);
 
-                    electionDetailsModel.find({ election_name: req.body.election_name }, function (err, electionDetails) {
+                    electionDetailsModel.find({ election_name: election_name }, function (err, electionDetails) {
                       if (err) {
                         res.json({
                           isError: true,
@@ -961,7 +958,7 @@ const usersController = {
                         candidateData.forEach((item, index) => {
                           if (item.candidate == req.body.candidate) {
                             electionDetailsModel.findOneAndUpdate({
-                              $and: [{ election_name: req.body.election_name }, { [`candidateData.${index}.candidate`]: req.body.candidate }]
+                              $and: [{ election_name: election_name }, { [`candidateData.${index}.candidate`]: req.body.candidate }]
                             }, { $inc: { [`candidateData.${index}.support`]: -1 } }, { new: true }, function (err, result) {
                               if (err) {
                                 res.json({

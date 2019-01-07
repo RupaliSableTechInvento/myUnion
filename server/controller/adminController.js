@@ -378,7 +378,7 @@ const adminController = {
               } else {
                 res.json({
                   success: true,
-                  data: {userElection:userElection,electionDetails:electionDetails}
+                  data: {electionDetails:electionDetails}
                 })
                 
               }
