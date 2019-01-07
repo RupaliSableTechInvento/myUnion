@@ -545,7 +545,8 @@ const usersController = {
             length: 6,
             numbers: true
           });
-          var userMsg='Congrats you are new passord. :'+passwordGenerated+' '+'Please login with new password.';
+          var userName=result[0].full_name
+          var userMsg='Hello '+userName+' ,your new account details are ,Mobile No:'+result[0].phone_no+'and password: '+passwordGenerated;
           var new_pasword = encode().value(passwordGenerated);
 
         
@@ -854,12 +855,7 @@ const usersController = {
     var candidate=req.body.candidate
   
     // candidate is candidate _id from userElection
-    var ajax_data = {
-      election_name:req.body.election_name,
-      candidate:req.body.candidate,
-      phone_no:decoded.phone_no
-
-    }
+ 
     userElectionModel.find({ _id: mongoose.Types.ObjectId(candidate)},function (err,userElection) {
       if (err) {
         res.json({
@@ -869,7 +865,13 @@ const usersController = {
       } else {
 
         if (userElection.length>0) {
-              
+          var election_name=userElection[0].election_name
+          var ajax_data = {
+            election_name:election_name,
+            candidate:req.body.candidate,
+            phone_no:decoded.phone_no
+      
+          }
           addSupport(ajax_data, function(err, data) {
             if (err) {
               res.send({ success: false, data: err });
