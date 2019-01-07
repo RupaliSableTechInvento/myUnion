@@ -16,9 +16,7 @@ const electionController = {
         {isActive:true}
       ]
      }
-    electionDetailsModel.find(
-   query
-      ).exec(function(err, result) { 
+    electionDetailsModel.find( query).exec(function(err, result) { 
       if (err) {
         res.json({
           isError:true,
@@ -107,82 +105,100 @@ const electionController = {
   },
   getAllApproveCandidate:(req,res,next)=>{
    let company_name=req.body.company_name
-   let election_name=req.body.election_name
-    var findQuery={
-      $and:[
-        {company_name:company_name},
-        {election_name:election_name},
-        {isApprove:true}
-      ]
-    }
-    userElectionModel.find(findQuery,
-    function (err,userElection) {
-      if (err) {
-        res.json({
-          isError: true,
-          data: err
-        })
+   var findElectionQuery={
+    $and:[
+      {company_name:company_name},
+      {isActive:true},
+    ]
+  }
+
+   electionDetailsModel.find(findElectionQuery,function (err,result) {
+    if (err) {
+      res.json({
+        isError: true,
+        data: err
+      })
+      
+    } else {
+      if (result.length>0) {
+        var election_name=result[0].election_name
+        console.log("Election name==>",election_name);
         
-      } else 
-      {
-        var findElectionQuery={
+  
+        var findQuery={
           $and:[
             {company_name:company_name},
             {election_name:election_name},
-          
+            {isApprove:true}
           ]
         }
-        electionDetailsModel.find(findElectionQuery,function (err,result) {
+          var resultObj=[]
+          var candidateData=[];
+          var data={}
+          candidateData=result[0].candidateData;    
+      userElectionModel.find(findQuery,
+        function (err,userElection) {
           if (err) {
             res.json({
               isError: true,
               data: err
             })
             
-          } else {
-
-              var resultObj=[]
-              var candidateData=[];
-              var data={}
-              candidateData=result[0].candidateData;
-              userElection.forEach(element => {
-                 candidateData.forEach(item=>{
-                  if (item.candidate==element._id) {
-                    console.log("Element Matched==>",element,item);
-                     data={
-                      _id:element._id,
-                      full_name:element.full_name,
-                      phone_no:element.phone_no,
-                      imageUrl:element.imageUrl,
-                      status:element.status,
-                      support:item.support
-                    }
-                  
-                    resultObj.push(data)
-                  }
-                })
-                console.log("Element==>",element);
-                
-                
-              });
-              if (resultObj.length==candidateData.length) {
-                console.log("resultObj==>",resultObj);
-                res.json({
-                  success: true,
-                  data: {resultObj}
-                })
-              }
-
-          
+          } else 
+          {
+            userElection.forEach(element => {
+              candidateData.forEach(item=>{
+               if (item.candidate==element._id) {
+                 console.log("Element Matched==>",element,item);
+                  data={
+                   _id:element._id,
+                   full_name:element.full_name,
+                   phone_no:element.phone_no,
+                   imageUrl:element.imageUrl,
+                   status:element.status,
+                   support:item.support
+                 }
+               
+                 resultObj.push(data)
+               }
+             })
+             console.log("Element==>",element);
+             
+             
+           });
+           if (resultObj.length==candidateData.length) {
+             console.log("resultObj==>",resultObj);
+             res.json({
+               success: true,
+               data: {resultObj}
+             })
+           }
+   
+         
           }
           
         })
-
-     
-     
+        
+        
+      } else {
+        
+        res.json({
+          isError:true,
+          data:'No data found'
+        })
       }
-      
-    })
+    
+    
+    }
+    
+  })
+
+
+
+
+
+
+  
   },
   
 };
