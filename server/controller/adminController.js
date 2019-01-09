@@ -6,7 +6,6 @@ var electionDetailsModel=require('../models/electionDetailsModel');
 var userElectionModel=require('../models/userElectionModel');
 var noticeModel=require('../models/noticeModel')
 var fightingFundModel=require('./../models/fightingFundModel')
-
 var jwt =require( 'jsonwebtoken');
 var env =require( "../env");
 var mongoose = require('mongoose');

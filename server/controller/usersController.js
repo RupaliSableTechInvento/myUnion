@@ -1012,8 +1012,6 @@ const usersController = {
     console.log("unSupport  request==>",decoded.phone_no);
 
     var candidate=req.body.candidate
-  
-   
     userElectionModel.find({ _id: mongoose.Types.ObjectId(candidate)},function (err,userElection) {
       if (err) {
         res.json({
@@ -1038,9 +1036,7 @@ const usersController = {
               var supportArray=result[0].support
               var isAlreadyVote=await search(election_name,candidate, supportArray)
               console.log("|isAlreadyVote in unsupport==>", await isAlreadyVote);
-              
-
-              if (await !isAlreadyVote) {
+             if (await !isAlreadyVote) {
                 res.json({
                   isError:true,
                   data:'Invalid Attempt'
@@ -1207,9 +1203,6 @@ const usersController = {
       }
       
     })
- 
-
-
   },
   getUserPost:(req,res,next)=>{  
     user_id=req.body.user_id
