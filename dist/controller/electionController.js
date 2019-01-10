@@ -91,6 +91,7 @@ const electionController = {
   },
   getAllApproveCandidate: (req, res, next) => {
     let company_name = req.body.company_name;
+    let department_name = req.body.department_name;
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     var findElectionQuery = {
       $and: [{ company_name: company_name }, { isActive: true }]
@@ -107,7 +108,7 @@ const electionController = {
           var election_name = result[0].election_name;
           console.log("Election name==>", election_name);
           var findQuery = {
-            $and: [{ company_name: company_name }, { election_name: election_name }, { isApprove: true }]
+            $and: [{ company_name: company_name }, { department_name: department_name }, { election_name: election_name }, { isApprove: true }]
           };
           var resultObj = [];
           var candidateData = [];
@@ -138,7 +139,7 @@ const electionController = {
                         if (item.candidate == element._id) {
                           supportArray.forEach(resultItem => {
                             if (resultItem.candidate == item.candidate) {
-                              console.log("Element Matched==>", resultItem.candidate);
+                              // console.log("Element Matched==>",resultItem.candidate);
                               data = {
                                 _id: element._id,
                                 full_name: element.full_name,
@@ -151,7 +152,7 @@ const electionController = {
                                 isSupport: true
                               };
                             } else {
-                              console.log("Element Not Matched==>", resultItem);
+                              // console.log("Element Not Matched==>",resultItem);
                               data = {
                                 _id: element._id,
                                 full_name: element.full_name,
@@ -165,12 +166,13 @@ const electionController = {
                               };
                             }
                           });
+
                           resultObj.push(data);
+                          console.log("resultObj with support array==>", resultObj);
                         }
                       });
-                      console.log("Element==>", element);
                     });
-                    if (resultObj.length == candidateData.length) {
+                    if (resultObj.length == userElection.length) {
                       console.log("resultObj==>", resultObj);
                       res.json({
                         success: true,
@@ -181,7 +183,6 @@ const electionController = {
                     userElection.forEach(element => {
                       candidateData.forEach(item => {
                         if (item.candidate == element._id) {
-                          console.log("Element Matched==>", element, item);
                           data = {
                             _id: element._id,
                             full_name: element.full_name,
@@ -194,11 +195,11 @@ const electionController = {
                             isSupport: false
                           };
                           resultObj.push(data);
+                          console.log("resultObj withOut support array==>", resultObj);
                         }
                       });
-                      console.log("Element==>", element);
                     });
-                    if (resultObj.length == candidateData.length) {
+                    if (resultObj.length == userElection.length) {
                       console.log("resultObj==>", resultObj);
                       res.json({
                         success: true,
