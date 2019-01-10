@@ -197,9 +197,6 @@ const electionController = {
                           }
                         }
                       })
-                 
-                       
-                      
                        resultObj.push(data)
                      }
                    })
@@ -245,10 +242,6 @@ const electionController = {
               
               }
             })
-      
-
-        
-   
          
           }
           

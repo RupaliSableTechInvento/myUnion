@@ -165,7 +165,6 @@ const electionController = {
                               };
                             }
                           });
-
                           resultObj.push(data);
                         }
                       });

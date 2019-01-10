@@ -290,7 +290,6 @@ const usersController = {
       });
     });
   },
-
   getAllCount: (req, res, next) => {
     console.log("getAllUserCount==>");
 
