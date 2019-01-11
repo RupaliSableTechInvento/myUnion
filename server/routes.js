@@ -49,6 +49,11 @@ const routes = (route) => {
     .post(adminController.approveCandidateReq)
     route.route('/getAllApproveCandidate')
     .post(electionController.getAllApproveCandidate)
+    route.route('/tryAggregration')
+    .post(electionController.tryAggregration)
+    route.route('/getAllApproveCandidateNew')
+    .post(electionController.getAllApproveCandidateNew)
+    
 
     
 // Approve Transaction
