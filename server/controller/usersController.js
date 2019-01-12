@@ -515,7 +515,7 @@ const usersController = {
 
         query = {  _id: decoded.id},
         update = {  
-          $push: { imageUrl: dataObj } 
+          $push: { imgURL: dataObj } 
         },
         options = {new: true};
         usersModel.findOneAndUpdate(query,update,options
@@ -526,7 +526,7 @@ const usersController = {
           });
           res.json({  
             success: true,
-            data:req.body
+            data:user
           })
         });
       }
