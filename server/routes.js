@@ -12,10 +12,12 @@ const routes = (route) => {
   // route.get('*', (req, res) => {
   //   res.sendFile(path.resolve(__dirname + '/../dist/' + 'index.html'));
   // });
-  // route.get('#/', (req, res) => {
-  //   res.sendFile(path.resolve(__dirname + '/../dist/' + 'index.html'));
-  // });
-
+  route.get('/', (req, res) => {
+    res.sendFile(path.resolve(__dirname + '/../frontend/' + 'index.html'));
+  });
+  route.get('#', (req, res) => {
+    res.sendFile(path.resolve(__dirname + '/../frontend/' + 'index.html'));
+  });
   route.get('#/', (req, res) => {
     res.sendFile(path.resolve(__dirname + '/../frontend/' + 'index.html'));
   });
