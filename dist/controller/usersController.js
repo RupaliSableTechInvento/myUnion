@@ -457,7 +457,7 @@ const usersController = {
       };
 
       query = { _id: decoded.id }, update = {
-        $push: { imgURL: dataObj }
+        $set: { imgURL: base64Str }
       }, options = { new: true };
       usersModel.findOneAndUpdate(query, update, options, (err, user) => {
         if (err) return res.json({

@@ -60,10 +60,15 @@ type:Object
     default: 'active'
   },
   imgURL: {
-    type: Array,
+    type: String,
     default:null
     // default: "../../assets/app/media/img/users/userProfileNew.png"
   },
+  // imgURL: {
+  //   type: Array,
+  //   default:null
+  //   // default: "../../assets/app/media/img/users/userProfileNew.png"
+  // },
   account_created: {
     type: Date,
     default: new Date(),
