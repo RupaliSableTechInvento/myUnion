@@ -270,6 +270,8 @@ const electionController = {
    let company_name=req.body.company_name
   //  let department_name=req.body.department_name
    var decoded = jwt.verify(req.body.authorization, env.App_key);
+   console.log("getAllApproveCandidate->",req.body);
+   
    var findElectionQuery={
     $and:[
       {company_name:company_name},
@@ -285,6 +287,7 @@ const electionController = {
       })
       
     } else {
+      console.log("electionDetailsModel->",result);
       if (result.length>0) {
         var election_name=result[0].election_name
         console.log("Election name==>",election_name);
@@ -311,14 +314,15 @@ const electionController = {
           } 
           else 
           {
-            var searchQuery = {
+            if (userElection.length>0) {
+              console.log("userElection==>",userElection);
+               var searchQuery = {
               $and: [
                 { '_id':  mongoose.Types.ObjectId(decoded.id) },
                 { 'company_name': company_name },
               ]
             };
-            usersModel.find(searchQuery,{support:1,_id:0}
-       
+            usersModel.find(searchQuery,{support:1,_id:0}  
             ,function(err, result) {
               if (err) {
                 res.json({
@@ -327,11 +331,6 @@ const electionController = {
                  })
               } else {
                 console.log("Result Found==>",result);
-                return(res.json({
-                  success:true,
-                  data:result
-                }))
-                
                 if (result.length>0) {
                   let supportArray=result[0].support;
                   userElection.forEach(element => {
@@ -414,6 +413,16 @@ const electionController = {
               }
             })
          
+              
+              
+            } else {
+              res.json({
+                isError: true,
+                data: 'candidate not found'
+              })
+              console.log("userElection==>",userElection);
+            }
+           
           }
           
         }).sort('department_name')
