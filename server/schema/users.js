@@ -61,6 +61,7 @@ type:Object
   },
   imgURL: {
     type: Array,
+    default:null
     // default: "../../assets/app/media/img/users/userProfileNew.png"
   },
   account_created: {

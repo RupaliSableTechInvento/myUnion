@@ -452,11 +452,14 @@ const usersController = {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
     console.log("Add User info for user==>", decoded.phone_no);
     if (base64Str) {
-      usersModel.findOneAndUpdate({
-        _id: decoded.id
-      }, { $push: { imageUrl: base64Str } }, {
-        new: true
-      }, (err, user) => {
+      var dataObj = {
+        imageUrl: base64Str
+      };
+
+      query = { _id: decoded.id }, update = {
+        $push: { imageUrl: dataObj }
+      }, options = { new: true };
+      usersModel.findOneAndUpdate(query, update, options, (err, user) => {
         if (err) return res.json({
           isError: true,
           data: err

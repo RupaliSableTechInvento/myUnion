@@ -59,7 +59,8 @@ const usersSchema = new mongoose.Schema({
     default: 'active'
   },
   imgURL: {
-    type: Array
+    type: Array,
+    default: null
     // default: "../../assets/app/media/img/users/userProfileNew.png"
   },
   account_created: {
