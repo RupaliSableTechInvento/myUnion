@@ -465,7 +465,7 @@ const usersController = {
       })
     })
   },
-  uploadProfilePhoto: (req, res, next) => {
+  uploadProfilePhotoOld: (req, res, next) => {
     // var id = mongoose.Types.ObjectId(req.body.id);
       var base64Str = req.body.imageUrl;
       var decoded = jwt.verify(req.body.authorization, env.App_key);
@@ -502,6 +502,36 @@ const usersController = {
           data: 'Unable to upload'
         })
       }
+  },
+  uploadProfilePhoto: (req, res, next) => {
+    // var id = mongoose.Types.ObjectId(req.body.id);
+      var base64Str = req.body.imageUrl;
+      var decoded = jwt.verify(req.body.authorization, env.App_key);
+      console.log("Add User info for user==>",decoded.phone_no);
+      if (base64Str) {
+        usersModel.findOneAndUpdate({
+          _id: decoded.id
+        }, { $push: { imageUrl: base64Str } }, {
+          new: true
+        }, (err, user) => {
+          if (err) return res.json({
+            isError: true,
+            data: err
+          });
+          res.json({  
+            success: true,
+            data:req.body
+          })
+        });
+      }
+      else{
+        res.json({
+          isError: true,
+          data: 'image url not found'
+        });
+      }
+     
+     
   },
   delete: (req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
