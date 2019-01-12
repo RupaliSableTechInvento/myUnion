@@ -340,7 +340,8 @@ const adminController = {
       console.log("decoded reqest from==>", decoded.role)
       var _id=req.body._id;
       if (decoded.role=='admin') { 
-        userElectionModel.findOneAndUpdate({_id:mongoose.Types.ObjectId(_id)},
+        userElectionModel.findOneAndUpdate(
+          {_id:mongoose.Types.ObjectId(_id)},
         {
           $set:
             {isApprove:true}
@@ -621,7 +622,6 @@ const adminController = {
       }
       
     },
-  
     addNotice:(req,res,next)=>{
       var token1=  req.body.authorization;
       var decoded = jwt.verify(token1, env.App_key);

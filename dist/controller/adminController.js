@@ -525,7 +525,6 @@ const adminController = {
       });
     }
   },
-
   addNotice: (req, res, next) => {
     var token1 = req.body.authorization;
     var decoded = jwt.verify(token1, env.App_key);
