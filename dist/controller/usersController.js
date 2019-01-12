@@ -741,21 +741,23 @@ const usersController = {
         req.body.phone_no = phone_no;
         req.body.empID = user[0].empID;
         req.body.user_id = decoded.id;
-        if (imageUrl) {
-          var base64Str = req.body.imageUrl;
-          var imageUrls = [];
-          var folderPath = path.join(__dirname + '../../../', 'frontend', 'Images', '_');
-          console.log("Folder path==>", folderPath);
-          var baseId = Common.getAlphaNumericRandomString(6, '#a');
-          var optionalObj = { 'fileName': baseId, 'type': 'png' };
-          var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
-          imageUrls.push({ url: '/Images/_' + imageInfo.fileName });
-          req.body.imageUrl = imageUrls;
-          query = req.body;
-        } else {
-          query = req.body;
-        }
+        // code to convert image
+        // if (imageUrl) {
+        //   var base64Str = req.body.imageUrl;
+        //   var imageUrls = [];
+        //   var folderPath = path.join(__dirname+'../../../', 'frontend', 'Images', '_');
+        //   console.log("Folder path==>",folderPath);
+        //   var baseId = Common.getAlphaNumericRandomString(6, '#a')
+        //   var optionalObj = { 'fileName': baseId, 'type': 'png' };
+        //   var imageInfo = base64ToImage(base64Str, folderPath, optionalObj);
+        //   imageUrls.push({ url: '/Images/_' + imageInfo.fileName, })
+        //   req.body.imageUrl=imageUrls;
+        //   query=req.body;
 
+        // } else {
+        //   query=req.body
+        // }
+        query = req.body;
         console.log("user _id==>", req.body.user_id);
 
         let userElection = new userElectionModel(query);
