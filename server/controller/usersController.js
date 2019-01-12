@@ -764,7 +764,7 @@ const usersController = {
     })
   },
   addCandidate:(req,res,next)=>{
-    console.log("addCandidate==>",req.body);
+    // console.log("addCandidate==>",req.body);
     var decoded = jwt.verify(req.body.authorization, env.App_key);
 
     var phone_no=decoded.phone_no;
@@ -1045,18 +1045,20 @@ const usersController = {
             
               var q1='deptDataOfVoting.'+department_name
               var queryString=q1+'.count';
-            
+                console.log("deptDataOfVoting==>",queryString);
+                
               query = { $and:[
                 { _id: mongoose.Types.ObjectId(decoded.id)},
                 {"support": {$elemMatch: { candidate} } }
               ]},
               update = {
                 $inc: { [queryString]: -1 } ,
-                $unset : { support :{$elemMatch: {candidate : 1}}},
-              },
+                $pull: { 'support': { candidate: candidate } } }
+              ,
               // $pullAll: { support :{$elemMatch: {candidate: null } }}
 
-              options = {upsert: true};
+              options = {
+                upsert: true};
               
             usersModel.findOneAndUpdate(
             query,update,options

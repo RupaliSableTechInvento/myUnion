@@ -322,7 +322,7 @@ const electionController = {
                 { 'company_name': company_name },
               ]
             };
-            usersModel.find(searchQuery,{support:1,_id:0}  
+            usersModel.find(searchQuery
             ,function(err, result) {
               if (err) {
                 res.json({
@@ -331,8 +331,8 @@ const electionController = {
                  })
               } else {
                 console.log("Result Found==>",result);
-                if (result.length>0) {
-                  let supportArray=result[0].support;
+                let supportArray=result[0].support;
+                if (supportArray.length>0) {  
                   userElection.forEach(element => {
                     candidateData.forEach(item=>{
                      if (item.candidate==element._id) {
