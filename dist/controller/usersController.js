@@ -424,9 +424,7 @@ const usersController = {
         $set: {
           imgURL: imageUrls
         }
-
       };
-
       usersModel.findOneAndUpdate({
         _id: decoded.id
       }, query, {

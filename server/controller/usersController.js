@@ -480,10 +480,8 @@ const usersController = {
         var query={
           $set:{
             imgURL : imageUrls,
-          }
-          
+          } 
         }
-      
       usersModel.findOneAndUpdate({
         _id: decoded.id
       }, query, {
@@ -504,7 +502,6 @@ const usersController = {
           data: 'Unable to upload'
         })
       }
-   
   },
   delete: (req, res, next) => {
     var decoded = jwt.verify(req.body.authorization, env.App_key);
