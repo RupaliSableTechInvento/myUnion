@@ -307,10 +307,17 @@ const electionController = {
                             });
 
                             resultObj.push(data);
-                            console.log("resultObj with support array==>", resultObj);
+                            console.log("resultObj with support array==>", resultObj, resultObj, resultObj.length, userElection.length);
                           }
                         });
                       });
+                      if (resultObj.length == userElection.length) {
+                        console.log("resultObj==>", resultObj);
+                        res.json({
+                          success: true,
+                          data: { resultObj }
+                        });
+                      }
                     } else {
                       userElection.forEach(element => {
                         candidateData.forEach(item => {
@@ -327,24 +334,17 @@ const electionController = {
                               isSupport: false
                             };
                             resultObj.push(data);
-                            console.log("resultObj withOut support array==>", resultObj);
+                            console.log("resultObj withOut support array==>", resultObj, resultObj.length, candidateData.length);
                           }
                         });
                       });
-                      //  if (resultObj.length==userElection.length) {
-                      //    console.log("resultObj==>",resultObj);
-                      //    res.json({
-                      //      success: true,
-                      //      data: {resultObj}
-                      //    })
-                      //  }
-                    }
-                    if (resultObj.length == userElection.length) {
-                      console.log("resultObj==>", resultObj);
-                      res.json({
-                        success: true,
-                        data: { resultObj }
-                      });
+                      if (resultObj.length == candidateData.length) {
+                        console.log("resultObj==>", resultObj);
+                        res.json({
+                          success: true,
+                          data: { resultObj }
+                        });
+                      }
                     }
                   }
                 });
