@@ -764,7 +764,7 @@ const usersController = {
     })
   },
   addCandidate:(req,res,next)=>{
-    // console.log("addCandidate==>",req.body);
+    console.log("addCandidate==>",req.body);
     var decoded = jwt.verify(req.body.authorization, env.App_key);
 
     var phone_no=decoded.phone_no;

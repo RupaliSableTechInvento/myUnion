@@ -105,7 +105,6 @@ const electionController = {
     }
 
   },
-
   getAllApproveCandidateOld:(req,res,next)=>{
     let company_name=req.body.company_name
     let department_name=req.body.department_name
@@ -301,7 +300,7 @@ const electionController = {
           var candidateData=[];
           var data={}
           candidateData=result[0].candidateData;    
-      userElectionModel.find(findQuery,
+         userElectionModel.find(findQuery,
         function (err,userElection) {
           if (err) {
             res.json({
@@ -309,7 +308,8 @@ const electionController = {
               data: err
             })
             
-          } else 
+          } 
+          else 
           {
             var searchQuery = {
               $and: [
@@ -326,7 +326,12 @@ const electionController = {
                   data: err
                  })
               } else {
-
+                console.log("Result Found==>",result);
+                return(res.json({
+                  success:true,
+                  data:result
+                }))
+                
                 if (result.length>0) {
                   let supportArray=result[0].support;
                   userElection.forEach(element => {
@@ -334,7 +339,7 @@ const electionController = {
                      if (item.candidate==element._id) {
                       supportArray.forEach(resultItem=>{
                         if (resultItem.candidate==item.candidate) {
-                          // console.log("Element Matched==>",resultItem.candidate);
+                          console.log("Element Matched==>",resultItem.candidate);
                           data={
                             _id:element._id,
                             full_name:element.full_name,
@@ -347,7 +352,7 @@ const electionController = {
                             isSupport:true
                           }
                         } else {
-                          // console.log("Element Not Matched==>",resultItem);
+                          console.log("Element Not Matched==>",resultItem);
                           data={
                             _id:element._id,
                             full_name:element.full_name,
@@ -368,15 +373,9 @@ const electionController = {
                      }
                    })
                  });
-                 if (resultObj.length==userElection.length) {
-                   console.log("resultObj==>",resultObj);
-                   res.json({
-                     success: true,
-                     data: {resultObj}
-                   })
-                 }
                   
-                } else {
+                }
+                else {
                   userElection.forEach(element => {
                     candidateData.forEach(item=>{
                      if (item.candidate==element._id) {
@@ -393,17 +392,23 @@ const electionController = {
                        }
                        resultObj.push(data)
                        console.log("resultObj withOut support array==>",resultObj);
-
                      }
                    })
                  });
-                 if (resultObj.length==userElection.length) {
-                   console.log("resultObj==>",resultObj);
-                   res.json({
-                     success: true,
-                     data: {resultObj}
-                   })
-                 }
+                //  if (resultObj.length==userElection.length) {
+                //    console.log("resultObj==>",resultObj);
+                //    res.json({
+                //      success: true,
+                //      data: {resultObj}
+                //    })
+                //  }
+                }
+                if (resultObj.length==userElection.length) {
+                  console.log("resultObj==>",resultObj);
+                  res.json({
+                    success: true,
+                    data: {resultObj}
+                  })
                 }
               
               }
