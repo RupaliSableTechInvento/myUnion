@@ -515,7 +515,7 @@ const usersController = {
 
         query = {  _id: decoded.id},
         update = {  
-          $set: { imgURL: base64Str } 
+          $set: { imgURL: dataObj } 
         },
         options = {new: true};
         usersModel.findOneAndUpdate(query,update,options
