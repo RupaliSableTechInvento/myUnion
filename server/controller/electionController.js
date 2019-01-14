@@ -522,12 +522,6 @@ const electionController = {
               
             }
          )
-
-
-
-
-
-         
          
        } else {
          
@@ -566,7 +560,107 @@ const electionController = {
       
     })
    
-  }
+  },
+  approveCandidateData:(req,res,next)=>{
+    let company_name=req.body.company_name
+   //  let department_name=req.body.department_name
+    console.log("approveCandidateData->",req.body);
+    
+    var findElectionQuery={
+     $and:[
+       {company_name:company_name},
+       {isActive:true},
+     ]
+   }
+    electionDetailsModel.find(findElectionQuery,function (err,result) {
+     if (err) {
+       res.json({
+         isError: true,
+         data: err
+       })
+       
+     } else {
+       // console.log("electionDetailsModel->",result);
+       if (result.length>0) {
+         var election_name=result[0].election_name
+ 
+         var findQuery={
+           $and:[
+             {company_name:company_name},
+             {election_name:election_name},
+             {isApprove:true}
+           ]
+         }
+           var resultObj=[]
+   
+           var candidateData=[];
+           var data={}
+           candidateData=result[0].candidateData;    
+          userElectionModel.find(findQuery,
+         function (err,userElection) {
+           if (err) {
+             res.json({
+               isError: true,
+               data: err
+             })
+             
+           } 
+           else 
+           {
+             if (userElection.length>0) {     
+                   userElection.forEach(element => {
+                     candidateData.forEach(item=>{
+                      if (item.candidate==element._id) {
+                         data={
+                          _id:element._id,
+                          full_name:element.full_name,
+                          phone_no:element.phone_no,
+                          imageUrl:element.imageUrl,
+                          status:element.status,
+                          support:item.support,
+                          department_name:element.department_name,
+                          company_name:element.company_name,
+                        
+                        }
+                        resultObj.push(data)
+                      }
+                    })
+                  });
+                  if (resultObj.length==candidateData.length) {
+                   //  console.log("resultObj==>",resultObj);
+                    res.json({
+                      success: true,
+                      data: {resultObj}
+                    })
+                  }
+               
+             } else {
+               res.json({
+                 isError: true,
+                 data: 'candidate not found'
+               })
+               console.log("userElection==>",userElection);
+             }
+            
+           }
+           
+         }).sort('department_name')
+         
+         
+       } else {
+         
+         res.json({
+           isError:true,
+           data:'No data found'
+         })
+       }
+     
+     
+     }
+     
+   })
+   
+   },
   
 };
 
