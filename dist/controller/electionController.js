@@ -271,59 +271,8 @@ const electionController = {
                       data: err
                     });
                   } else {
-                    // console.log("Result Found==>",result);
+
                     let supportArray = result[0].support;
-                    // if (supportArray.length>0) {  
-                    //   userElection.forEach(element => {
-                    //     candidateData.forEach(item=>{
-                    //      if (item.candidate==element._id) {
-                    //       supportArray.forEach(resultItem=>{
-
-
-                    //         if (resultItem.candidate==item.candidate) {
-                    //           console.log("Element Matched==NEw>",resultItem.candidate,item.candidate);
-                    //           data={
-                    //             _id:element._id,
-                    //             full_name:element.full_name,
-                    //             phone_no:element.phone_no,
-                    //             imageUrl:element.imageUrl,
-                    //             status:element.status,
-                    //             support:item.support,
-                    //             department_name:element.department_name,
-                    //             company_name:element.company_name,
-                    //             isSupport:true
-                    //           }
-                    //         } else {
-                    //           console.log("Element Not Matched==>",resultItem.candidate,item.candidate);
-                    //           data={
-                    //             _id:element._id,
-                    //             full_name:element.full_name,
-                    //             phone_no:element.phone_no,
-                    //             imageUrl:element.imageUrl,
-                    //             status:element.status,
-                    //             support:item.support,
-                    //             department_name:element.department_name,
-                    //             company_name:element.company_name,
-                    //             isSupport:false
-                    //           }
-                    //         }
-                    //       })
-
-                    //        resultObj.push(data)
-                    //       //  console.log("resultObj with support array==>",resultObj,resultObj,resultObj.length,userElection.length);
-
-                    //      }
-                    //    })
-                    //  });
-                    //  if (resultObj.length==userElection.length) {
-                    //   // console.log("resultObj==>",resultObj);
-                    //   res.json({
-                    //     success: true,
-                    //     data: {resultObj}
-                    //   })
-                    // }
-                    // }
-
 
                     if (supportArray.length > 0) {
                       console.log("All array length==>", candidateData.length, resultObj.length, userElection.length);

@@ -34,6 +34,9 @@ const routes = (route) => {
     .post(adminController.deActivateUser);
   route.route('/registerUser')
     .post(adminController.registerUser);
+    route.route('/supportUserData')
+    .post(adminController.supportUserData);
+    
 
       // Election API
   route.route('/createElection')

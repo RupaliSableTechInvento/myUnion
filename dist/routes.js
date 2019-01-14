@@ -28,6 +28,7 @@ const routes = route => {
   route.route('/setActiveUser').post(adminController.setActiveUser);
   route.route('/deActivateUser').post(adminController.deActivateUser);
   route.route('/registerUser').post(adminController.registerUser);
+  route.route('/supportUserData').post(adminController.supportUserData);
 
   // Election API
   route.route('/createElection').post(adminController.createElection);

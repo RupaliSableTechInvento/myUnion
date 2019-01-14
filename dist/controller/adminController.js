@@ -552,6 +552,25 @@ const adminController = {
         data: 'Unauthorized access'
       });
     }
+  },
+  supportUserData: (req, res, next) => {
+    var candidate = req.body.candidate;
+    var query = { "support": { $elemMatch: { candidate: candidate } } };
+    usersModel.find(query, { full_name: 1, _id: 0 }, function (err, result) {
+      if (err) {
+        res.json({
+          isError: true,
+          data: err
+        });
+      } else {
+        console.log("supportUserData==>", result);
+
+        res.json({
+          success: true,
+          data: result
+        });
+      }
+    });
   }
 
 };
